@@ -24,6 +24,12 @@ Two methods of signal decomposition using QTFDs:
 ```
 
 # THINGS NATHAN HAS DONE: 29/08/19
-Uploaded first go at algorithm: file of interest is tvfilt_decomp_NS\tf_decomposition_demo_v1.m, the remaining files are called by this demo
-Uploaded EEG test signal into data\test_signals: file test_signal_eeg1.mat
-Comments: in general pretty good but weird missing bit in reconstructed signal at around 1750 samples (edge linking not picking up the LF component at this point in time). I will look into it. Good things to note is that it shows temporal segmentation, not just frequency based segmentation.
+Uploaded first go at algorithm: file of interest is
+`tvfilt_decomp_NS\tf_decomposition_demo_v1.m`, the remaining files are called by this demo
+Uploaded EEG test signal into data\test_signals: `file test_signal_eeg1.mat`
+
+## Comments: 
+in general pretty good but weird missing bit in reconstructed signal at around 1750 samples
+(edge linking not picking up the LF component at this point in time). I will look into
+it. Good things to note is that it shows temporal segmentation, not just frequency based
+segmentation.

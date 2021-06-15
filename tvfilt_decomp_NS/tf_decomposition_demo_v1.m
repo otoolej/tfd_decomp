@@ -4,7 +4,12 @@
 %
 %
 
-load test_signal_eeg1
+%
+%  JOT: added this to find path:
+cur_path = strrep(mfilename('fullpath'), mfilename, '');
+test_ddir = [cur_path '../data/test_signals/'];
+
+load([test_ddir 'test_signal_eeg1.mat']);
 
 N = 2048;
 wl = 63; ref1 = N/2+1; 
@@ -111,3 +116,15 @@ end
 % signal at around 1750 samples, will look into it, best thing about it is
 % that is shows temporal segmentation, not just frequency based
 % segmentation
+
+
+% JOT: adding this in so I can compare with mine: 
+cur_path = strrep(mfilename('fullpath'), mfilename, '');
+addpath([cur_path '../common_code/']);
+figure(1); clf; hold all;
+decomp_plot = decomp1;
+for n = 1:size(decomp1, 1)
+    decomp_plot(n, decomp1(n, :) == 0) = NaN;
+end
+figure(1);
+plot_components_(decomp_plot);
