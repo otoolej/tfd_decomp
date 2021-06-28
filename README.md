@@ -35,4 +35,6 @@ it. Good things to note is that it shows temporal segmentation, not just frequen
 segmentation.
 
 # THINGS NATHAN HAS DONE: 28/06/21
-I have improved the edge-linking algorithm (it now tracks bifurcations and selects the best version at a time). Also mucking about with filter bandwidths in the decomposition step (thinking of setting two options - full band or narrowband decomposition, where full band decomposes the whole TF plane so reconstruction will be approximately perfect, if that makes any sense, and narrowband where only the main components are extracted)
+I have improved the edge-linking algorithm (it now tracks bifurcations and selects the best version at a time). Also mucking about with filter bandwidths in the decomposition step (thinking of setting two options - full band or narrowband decomposition, where full band decomposes the whole TF plane so reconstruction will be approximately perfect, if that makes any sense, and narrowband where only the main components are extracted).
+
+Note: have not uploaded these yet as I cannot relax the QIMR computers proxy when I am working from home (which is today)
