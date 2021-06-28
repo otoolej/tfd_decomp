@@ -33,3 +33,6 @@ in general pretty good but weird missing bit in reconstructed signal at around 1
 (edge linking not picking up the LF component at this point in time). I will look into
 it. Good things to note is that it shows temporal segmentation, not just frequency based
 segmentation.
+
+# THINGS NATHAN HAS DONE: 28/06/21
+I have improved the edge-linking algorithm (it now tracks bifurcations and selects the best version at a time). Also mucking about with filter bandwidths in the decomposition step (thinking of setting two options - full band or narrowband decomposition, where full band decomposes the whole TF plane so reconstruction will be approximately perfect, if that makes any sense, and narrowband where only the main components are extracted)
