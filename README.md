@@ -34,7 +34,7 @@ in general pretty good but weird missing bit in reconstructed signal at around 1
 it. Good things to note is that it shows temporal segmentation, not just frequency based
 segmentation.
 
-# THINGS NATHAN HAS DONE: 28/06/21
-I have improved the edge-linking algorithm (it now tracks bifurcations and selects the best version at a time). Also mucking about with filter bandwidths in the decomposition step (thinking of setting two options - full band or narrowband decomposition, where full band decomposes the whole TF plane so reconstruction will be approximately perfect, if that makes any sense, and narrowband where only the main components are extracted).
+# THINGS NATHAN HAS DONE: 12/07/21
+I have improved the edge-linking algorithm (it now tracks bifurcations and selects the best version at a time). Also mucking about with filter bandwidths in the decomposition step (thinking of setting two options - full band or narrowband decomposition, where full band decomposes the whole TF plane so reconstruction will be approximately perfect, if that makes any sense, and narrowband where only the main components are extracted). I have implemented the process on the three test signals and get something else - although it is pretty dependent on the parameter values set within the subfunctions. I wonder if there are some decent defaults here that might makes sense (sqrt(N) is always a good one). 
 
-Note: have not uploaded these yet as I cannot relax the QIMR computers proxy when I am working from home (which is today)
+
