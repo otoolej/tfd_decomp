@@ -57,7 +57,8 @@ while ( sDif > tol &&  iter <= iternum ) %
         betathr = beta; 
     end
     
-    u = projec(s - sum_x - sum_y - lamuda/alpha,var);%projection operation; u denotes the noise variable; if let var=0, the output u will be zeros. 
+    u = projec(s - sum_x - sum_y - lamuda/alpha,var);%projection operation; u denotes the noise variable; if let var=0, the output u will be zeros.
+
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%  update each mode  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     for i = 1:K
