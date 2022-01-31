@@ -1,4 +1,4 @@
-function decomp = tf_decomposition_v1(signal1, len1)
+function decomp = tf_decomposition_v1(signal1, len1, flag)
 %
 %
 %  Note TFD will be NxN (initially) where N is the signal length; TFD,
@@ -23,8 +23,8 @@ function decomp = tf_decomposition_v1(signal1, len1)
 %
 
 N = length(signal1);
-[wx, bw, fw, M] = setparameters(N);
-bwf = 'lossless';
+[wx, bw, fw, M] = setparameters(N, flag);
+bwf = 'lossless'; % always go lossless
 
 % estimate TFD
 %switch flag1
@@ -37,7 +37,8 @@ bwf = 'lossless';
 %end
 
 % find components in TFD
-[el1, ei1] = find_components(tfrep, tfrep1, bw, fw, len1);
+%[el1, ei1] = find_components(tfrep, tfrep1, bw, fw, len1);
+[el1, ei1] = find_components_v1(tfrep, tfrep1, 2*bw, 2*fw, len1);
 
 % extract components from signal
 decomp = tv_filtering(el1, ei1, signal1, tfrep, M, bwf);
