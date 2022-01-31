@@ -35,7 +35,7 @@ SIF2=INT(IF2,time);
 [~, DTs2] = SST2(Sig_noise(12,:)',100,150,IF2,SIF2);
 .................................................................
 figure
-suptitle('Fig. 2');
+sgtitle('Fig. 2');
 subplot(621)
 imagesc(time,fre,abs(Ts1));axis xy;
 xlabel('Time / s');
@@ -117,7 +117,7 @@ set(ha,'xlim',[x11 x22],'ylim',[y11 y22]);
 ...........................................................
 t1=331;
 figure
-suptitle('Fig. 3');
+sgtitle('Fig. 3');
 subplot(211)
 %plot(fre,abs(tfr(:,100)));hold on;
 plot(fre,abs(Ts1(:,t1)),'b-','linewidth',2);hold on;
@@ -158,7 +158,7 @@ tfr_ridh=abs(tfr_ridh(1:200,:));
 
 
 figure;
-suptitle('Fig. 4');
+sgtitle('Fig. 4');
 subplot(221);
 imagesc(time,fre,abs(tfr_wv));
 xlabel('Time / s');
@@ -199,7 +199,7 @@ end
 end
 
 figure;
-suptitle('Fig. 5');
+sgtitle('Fig. 5');
 subplot(121)
 plot(time,IF1,'k-','linewidth',4);hold on;
 plot(time,fre(Cs1),'r-','linewidth',1.5);
@@ -221,7 +221,7 @@ ylabel('Fre / Hz');
 legend('True IF','Estimated IF');
 
 figure;
-suptitle('Fig. 6');
+sgtitle('Fig. 6');
 subplot(221)
 plot(time,S1,'k-','linewidth',1.5);hold on;plot(time,Ts1_sig(1,:),'r-','linewidth',1);xlabel('Time / s');ylabel('Amp / V');axis ([0 4 -1.5 1.5]);
 subplot(222)

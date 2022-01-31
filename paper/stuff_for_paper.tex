@@ -54,40 +54,40 @@ the IF is defined as,
 so when $|A_1| = |A_2|$ the oscillation in the IF disappears, but this is rarely the case with harmonic signals or most real signals.
 
 WORKING
-Magnitude of $z(t) \rightarrow Ae^{\omega t} = A\left\( \cos(\omega t) + j \sin(\omega t)\right\)$
+Magnitude of $z(t) \rightarrow Ae^{\omega t} = A\left( \cos(\omega t) + j \sin(\omega t)\right)$
 \begin{displaymath}
-z(t) = = A_1\left\( \cos(\omega_1 t) + j \sin(\omega_1 t)\right\) + A_2\left\( \cos(\omega_2 t) + j \sin(\omega_2 t)\right\)
+z(t) = = A_1\left( \cos(\omega_1 t) + j \sin(\omega_1 t)\right) + A_2\left( \cos(\omega_2 t) + j \sin(\omega_2 t)\right)
 \end{displaymath}
 Magnitude of $z(t) = a+jb = \sqrt{a^2+b^2}, a = A_1 \cos(\omega_1 t)+ A_2 \cos(\omega_2 t), b = A_1 \sin(\omega_1 t)+ A_2 \sin(\omega_2 t)$.
 \begin{eqnarray*}
-|z(t)|^2 &=& \left\( A_1 \cos(\omega_1 t)+ A_2 \cos(\omega_2 t) \right)^2 + \left\( A_1 \sin(\omega_1 t)+ A_2 \sin(\omega_2 t) \right\)^2 \\
+|z(t)|^2 &=& \left( A_1 \cos(\omega_1 t)+ A_2 \cos(\omega_2 t) \right)^2 + \left( A_1 \sin(\omega_1 t)+ A_2 \sin(\omega_2 t) \right)^2 \\
  &=& A_1^2 \cos^2(\omega_1 t)+ A_2^2 \cos^2(\omega_2 t) + 2A_1A_2\cos(\omega_1 t)\cos(\omega_2 t) + A_1^2 \sin^2(\omega_1 t)+ A_2^2 \sin^2(\omega_2 t) + 2A_1A_2\sin(\omega_1 t)\sin(\omega_2 t) \\
-   &=& A_1^2 \left\( \cos^2(\omega_1 t)+\sin^2(\omega_1 t) \right\) + A_2^2 \left\( \cos^2(\omega_1 t)+\sin^2(\omega_1 t) \right\) + 2A_1A_2 \left\( \cos(\omega_1 t)\cos(\omega_2 t) + \sin(\omega_1 t)\sin(\omega_2 t) \right\)
+   &=& A_1^2 \left( \cos^2(\omega_1 t)+\sin^2(\omega_1 t) \right) + A_2^2 \left( \cos^2(\omega_1 t)+\sin^2(\omega_1 t) \right) + 2A_1A_2 \left( \cos(\omega_1 t)\cos(\omega_2 t) + \sin(\omega_1 t)\sin(\omega_2 t) \right)
 \end{eqnarray*}
 Noting  $\cos^2(x)+\sin^2(y) = 1$, $2\cos(x)\cos(y) = \cos(x-y)+\cos(x+y)$ and $2\sin(x)\sin(y) = \cos(x-y)-\cos(x+y)$ results in 
 \begin{eqnarray*}
-   &=& A_1^2 + A_2^2 + A_1A_2 \left\( \cos(\omega_1 t - \omega_2 t) + \cos(\omega_1 t + \omega_2 t) + \cos(\omega_1 t - \omega_2 t) -\cos(\omega_1 t + \omega_2 t)) \right\) \\
-   &=& A_1^2 + A_2^2 + A_1A_2 \left\( \cos(\omega_2 t - \omega_1 t) + \cos(\omega_2 t + \omega_1 t) + \cos(\omega_2 t - \omega_1 t) -\cos(\omega_2 t + \omega_1 t)) \right\) \\
+   &=& A_1^2 + A_2^2 + A_1A_2 \left( \cos(\omega_1 t - \omega_2 t) + \cos(\omega_1 t + \omega_2 t) + \cos(\omega_1 t - \omega_2 t) -\cos(\omega_1 t + \omega_2 t)) \right) \\
+   &=& A_1^2 + A_2^2 + A_1A_2 \left( \cos(\omega_2 t - \omega_1 t) + \cos(\omega_2 t + \omega_1 t) + \cos(\omega_2 t - \omega_1 t) -\cos(\omega_2 t + \omega_1 t)) \right) \\
    &=& A_1^2 + A_2^2 + 2A_1A_2 \cos(\omega_2 t - \omega_1 t) 
 \end{eqnarray*}
 Phase of $z(t) = a+jb = \arctan (b/a)$. There are regions of validity for this function, which result in the use of atan2 when programming the arctan function, but I will stick with the original here. The derivative of the phase, which defines the IF, is
 \begin{displaymath}
 \frac{d \arctan x}{dx} = \frac{1}{1+x^2}
-\begin{displaymath}
+\end{displaymath}
 Solving using the chain rule results in,
 \begin{eqnarray*}
-\frac{d \phi(t)}{dt} = \frac{d \phi}{dx}\frac{dx}{dt} &=& \frac{1}{1+\left\( frac{b}{a} \right\) ^2} \frac{(b'a-ba')}{a^2} \\
+\frac{d \phi(t)}{dt} = \frac{d \phi}{dx}\frac{dx}{dt} &=& \frac{1}{1+\left( frac{b}{a} \right) ^2} \frac{(b'a-ba')}{a^2} \\
 &=& \frac{(b'a-ba')}{a^2+b^2}
-\begin{eqnarray*}
+\end{eqnarray*}
 where
 \begin{eqnarray*}
 a' &=& -1 (A_1\omega_1 \sin(\omega_1 t)+ A_2 \omega_2 \sin(\omega_2 t)) 
 b' &=& b = A_1\omega_1 \cos(\omega_1 t)+ A_2 \omega_2 \cos(\omega_2 t).
-\begin{eqnarray*}
+\end{eqnarray*}
 and $a^2+b^2 = A^2(t)$. This results in 
 \begin{displaymath}
 \frac{d \phi(t)}{dt} = \frac{A_1^2\omega_1 + A_2^2 \omega_2+A_1A_2(\omega_1+\omega_2)\cos(\omega_2t-\omega_1t)}{A^2(t)}
-\begin{displaymath}
+\end{displaymath}
 which also equals,
 \begin{displaymath}
 \phi'(t) =\frac{1}{2}(\omega_1 t + \omega_2 t) + \frac{1}{2}(\omega_2 t - \omega_1 t) \frac{A_2^2 - A_1^2}{A^2(t)}
@@ -137,3 +137,8 @@ when $M$ is even, $n = 0,..., M-1$ and $i$ is $0,...,N-1$.
 
 
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
