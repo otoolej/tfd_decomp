@@ -1,0 +1,27 @@
+#+TITLE: qTFD decomposition methods
+#
+# started: 19-Nov-2021 
+
+* PLOTTING figures
+** fractional Gaussian noise
+   + plot the different methods
+
+     #+BEGIN_SRC matlab
+       print_ = false;
+       all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'msst', 'vmd'};
+       
+       for n = 1:length(all_methods)
+	   compare_methods_noise_signals_plot(all_methods{n}, print_);
+       end
+     #+END_SRC
+
+** bat signal     
+
+   #+BEGIN_SRC matlab
+     print_ = false;
+     all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'msst', 'vmd'};
+     
+     for n = 1:length(all_methods)
+	compare_methods_generic_signal_plot(all_methods{n}, 'bat', print_);
+     end
+   #+END_SRC

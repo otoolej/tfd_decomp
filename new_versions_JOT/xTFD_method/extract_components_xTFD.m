@@ -1,0 +1,215 @@
+%-------------------------------------------------------------------------------
+% extract_components: Extract components from signal using STFT or Q-TFD
+%
+% Syntax: [y_components]=extract_components(x,Fs,N_components)
+%
+% Inputs: 
+%     x,Fs - 
+%
+% Outputs: 
+%     [y_components] - 
+%
+% Example:
+%     
+%
+
+% John M. O' Toole, University of Deusto
+% Started: 17-01-2013
+%-------------------------------------------------------------------------------
+function [y, x_residual, x_components] = ...
+    extract_components_xTFD(x, Fs, params, N_components, db_plot, tfd_limits_freq)
+if(nargin < 2 || isempty(Fs)) Fs = 1; end
+if(nargin < 3 || isempty(params)), params = decomp_params; end
+if(nargin < 4 || isempty(N_components)) N_components = []; end
+if(nargin < 5 || isempty(db_plot)) db_plot = 0; end
+if(nargin < 6 || isempty(tfd_limits_freq)) tfd_limits_freq = []; end
+
+
+x = x(:).';
+
+y = []; x_residual = []; x_components = [];
+N = length(x);
+
+if(params.pad_signal)
+    No = N;
+    xo = x;
+    x = preprocessing_signal(x, true);
+    Lpad = length(x) - N;
+    N = length(x);
+end
+
+
+
+%---------------------------------------------------------------------
+% 1. generate the Q-TFD
+%---------------------------------------------------------------------
+% get the kernel
+[lag_win, dopp_win, Nfreq] = get_kernel_windows(params, N);
+% generate the TFD
+[qtfd, g2] = qtfd_sep_kern(x, dopp_win, lag_win, N, Nfreq);
+% scale
+[qtfd, scale_factor] = scale_tfd(qtfd, g2, N);
+
+
+if(db_plot)
+    set_figure(2); 
+    vtfd(qtfd); axis('tight');
+end
+
+
+%---------------------------------------------------------------------
+% 2. estimate tracks (from peaks) and pick components in TF domain
+%---------------------------------------------------------------------
+[if_tracks, f_scale, t_scale] = find_tracks(qtfd, Fs, N, params, tfd_limits_freq);
+
+% using Nathan's IF extraction method
+% scale_Nfreq = (size(qtfd, 2) / size(qtfd, 1));
+% l1 = round(7 * scale_Nfreq);
+% l2 = round(3 * scale_Nfreq);
+% [el1, ei1] = find_components_NS(qtfd', l1, l2, 32);
+% if_tracks = cellfun(@(x) fliplr(x), el1, 'un', false);
+
+% limit number of components:
+if_tracks = if_tracks(1:min(N_components, length(if_tracks)));
+
+if(isempty(if_tracks))
+    if(params.db_warn)
+        fprintf('no tracks found in the TFD; exiting\n');
+    end
+
+    return;    
+end
+
+
+%---------------------------------------------------------------------
+% 3. synthesize components
+%---------------------------------------------------------------------
+% this turns off correction of the IA from estimates of the BW of the components
+if(~params.correct_amplitude_bw)
+    g2 = [];
+end
+
+% a. estimate components from IF (but without IP):
+s_nophase = synth_signal_sinmodel(if_tracks, [], qtfd, Fs, [], g2);
+%  ... and combine into 1 signal:
+% s_all = combine_one_signal(s_nophase);
+s_all = sum(cat(2, s_nophase{:}), 2);
+
+
+% b. X-TFD between original signal and sin-model (without IP):
+if(params.phase_correction)
+
+    xtf = xtfd_sep_kern(x, s_all, dopp_win, lag_win, N, Nfreq);
+    
+    % c. estimate phase from X-TFD (using IF locations):
+    ip_tracks = get_phase(if_tracks, xtf);
+
+    % d. synthesize components again but this time with IPs:
+    s_est = synth_signal_sinmodel(if_tracks, ip_tracks, qtfd, Fs, [], g2);
+
+    
+    db_testing_plot = false;
+    if(db_testing_plot)
+        set_figure(987); 
+        plot(ip_tracks{1}(:,1), ip_tracks{1}(:,2));
+    end
+    
+
+else
+    % only for comparing without phase adjustment:
+    s_est = s_nophase;
+end
+
+
+% if s_est is not quite the right length:
+L_comp = length(s_est);
+x_components = cell(L_comp, 1);
+for a = 1:length(s_est)
+  x_components{a} = zeros(1, N);
+  nn = 1:min(N, length(s_est{a}));
+  
+  x_components{a}(nn) = s_est{a}(nn);
+end
+
+
+%---------------------------------------------------------------------
+% 4. remove components from signal
+%---------------------------------------------------------------------
+if(~isempty(N_components))
+
+    y = nansum(cat(1, x_components{1:min(N_components, length(x_components))}), 1);
+    y = y(:)';
+
+    if(length(y) > N)
+        y = y(1:N);
+    end
+
+    x_residual = x - y;
+end
+
+
+
+if(params.pad_signal)
+    y = y(floor(Lpad / 2) + 1:end - floor(Lpad / 2));
+    x_residual = x_residual(floor(Lpad / 2) + 1:end - floor(Lpad / 2));
+    for p = 1:length(x_components)
+        x_components{p} = x_components{p}(floor(Lpad / 2) + 1:end - floor(Lpad / 2));
+    end
+
+    x = xo;
+end
+
+
+%---------------------------------------------------------------------
+% 5. PLOT
+%---------------------------------------------------------------------
+if(db_plot)
+    % set_figure(888);
+    % subplot(211); hold all;
+    % title('xTFD method');
+    % nn = 1:length(x); t = nn./Fs;
+    % plot(t, x, '-o', t, y, '-+');
+    % xlim([t(1) t(end)]);
+    % y_lims = ylim;
+    
+    % subplot(212); hold all;
+    % plot(t, x_residual);    
+    % ylim(y_lims);
+    % xlim([t(1) t(end)]);    
+    fprintf('MSE = %g\n', mean(abs(x_residual).^2));
+
+    if(params.phase_correction)
+        set_figure(301); 
+        vtfd(angle(xtf), [], Fs);
+    end
+
+    % plot the components:
+    % plot_components(x, x_components, Fs, 24, N_components, false);    
+end
+
+
+
+
+
+function [lag_win, dopp_win, Nfreq] = get_kernel_windows(params, N)
+%---------------------------------------------------------------------
+% assemble the lag and Doppler kernel windows
+%---------------------------------------------------------------------
+lag_win = params.lag_kernel;
+dopp_win = params.doppler_kernel(N);
+Nfreq = params.Nfreq;
+
+% make sure that Doppler/lag windows are odd:
+lag_win{1} = make_odd(lag_win{1});
+dopp_win{1} = make_odd(dopp_win{1});
+
+
+function y = combine_one_signal(x_comps)
+%---------------------------------------------------------------------
+% combine components into 1 signal
+%---------------------------------------------------------------------
+y = zeros(length(x_comps{1}), 1);
+for a = 1:length(x_comps)
+    y = y + x_comps{a};
+end
+

@@ -1,0 +1,39 @@
+#+TITLE: testing and comparing methods
+#
+# started: 20-Oct-2021 
+
+* 2-tone tests
+  + using 2 sinusoids (stationary) to compare methods, as per original EMD method in the
+    TV-EMD cite:Li2017 version too.
+  + shift frequency and scale amplitude of one component
+
+    #+BEGIN_SRC matlab
+      sep_2tones_test('tvemd', false, true, false, 50);
+      sep_2tones_test('vmd', false, true, false, 50);
+      sep_2tones_test('ssst', false, true, false, 50);
+      sep_2tones_test('efd', false, true, false, 50);
+      sep_2tones_test('xTFD', false, true, false, 50);
+      sep_2tones_test('tvfilt', false, true, false, 50);            
+      
+      % and plot all:
+      plot_2tone_tests_compare(false);
+    #+END_SRC
+
+
+
+** with time mask which seperates signals in time
+
+    #+BEGIN_SRC matlab
+      tmask=true;
+      
+      sep_2tones_test('tvemd', tmask, true, false, 50);
+      sep_2tones_test('vmd', tmask, true, false, 50);
+      sep_2tones_test('ssst', tmask, true, false, 50);
+      sep_2tones_test('efd', tmask, true, false, 50);
+      sep_2tones_test('xTFD', tmask, true, false, 50);
+      sep_2tones_test('tvfilt', tmask, true, false, 50);            
+      
+      % and plot all:
+      plot_2tone_tests_compare(false);
+    #+END_SRC
+   
