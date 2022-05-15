@@ -16,25 +16,30 @@ function decomp = tf_decomposition_v1_JOT(signal1, params, N_components, db_plot
 %  fw - search range in terms of time
 %  len1 - minimum component length
 %
-%  EXTRACT COMPONENT inputs:
-%  M = filter order in samples
-%  flag 2 - lossy or lossless decomposition (0 = lossy, 1 = lossless)
 % 
 %
-if(nargin < 2 || isempty(params)), params = tvfilt_params(length(signal1)); end
+if(nargin < 2 || isempty(params))
+    params = decomp_params(length(signal1), 'tvfilt');
+end
+if(nargin < 3 || isempty(N_components)), N_components = []; end
+if(nargin < 4 || isempty(db_plot)), db_plot = false; end
+
 
 N = length(signal1);
 
 
+
+%---------------------------------------------------------------------
 % zero pad at the end:
-signal1 = [signal1 zeros(1, params.M + 1)];
+%---------------------------------------------------------------------
+signal1 = [signal1 zeros(1, params.L_filt + 1)];
 N = length(signal1);
 
+%---------------------------------------------------------------------
 % generate separable-kernel TFD:
-Ldopp = make_odd(floor(1.5 * params.wx));
-qtfd = qtfd_sep_kern(signal1, {Ldopp, 'hann'}, {params.wx, 'dolph', 100}, N, N);
+%---------------------------------------------------------------------
+qtfd = qtfd_sep_kern(signal1, params.doppler_kernel, params.lag_kernel, N, N);
 % qtfd = qtfd_sep_kern(signal1, {params.wx, 'hann'}, {params.wx, 'dolph', 100}, N, N);
-tfrep = qtfd';
 
 
 % dispVars(size(tfrep));
@@ -44,13 +49,23 @@ if(db_plot)
     axis('tight');
 end
 
-      
-% find components in TFD
-[el1, ei1] = find_components_v2(tfrep, tfrep, params.bw, params.fw, params.len1);
 
-% extract components from signal
-decomp = tv_filtering_JOT(el1, ei1, signal1, tfrep, params.M, 'lossless', N_components);
+%---------------------------------------------------------------------
+% extract IF components from TFD
+%---------------------------------------------------------------------
+% [el1, ei1] = find_components_v2(qtfd', qtfd', params.bw, params.fw, params.len1);
+[el1, ei1] = if_tracks_MCQmethod(qtfd, N, 1, ...
+                                 params.bw, params.fw, params.len1, ...
+                                 params.max_no_peaks, ...
+                                 params.qtfd_max_thres);
+
+
+%---------------------------------------------------------------------
+% do the TV filtering
+%---------------------------------------------------------------------
+decomp = tv_filtering_JOT(el1, ei1, signal1, qtfd', params.L_filt, 'lossless', N_components);
+
 
 % remove zero-padding
-Mh = ceil(params.M / 2);
+Mh = ceil(params.L_filt / 2);
 decomp = decomp(:, Mh:end - Mh - 1);

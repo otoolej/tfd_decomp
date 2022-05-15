@@ -19,7 +19,9 @@
 function [y, x_residual, x_components] = ...
     extract_components_xTFD(x, Fs, params, N_components, db_plot, tfd_limits_freq)
 if(nargin < 2 || isempty(Fs)) Fs = 1; end
-if(nargin < 3 || isempty(params)), params = decomp_params; end
+if(nargin < 3 || isempty(params))
+    params = decomp_params(length(x), 'xtfd');
+end
 if(nargin < 4 || isempty(N_components)) N_components = []; end
 if(nargin < 5 || isempty(db_plot)) db_plot = 0; end
 if(nargin < 6 || isempty(tfd_limits_freq)) tfd_limits_freq = []; end
@@ -43,10 +45,14 @@ end
 %---------------------------------------------------------------------
 % 1. generate the Q-TFD
 %---------------------------------------------------------------------
-% get the kernel
-[lag_win, dopp_win, Nfreq] = get_kernel_windows(params, N);
+fprintf('doppler: ');
+dispVars(params.doppler_kernel);
+fprintf('lag: ');
+dispVars(params.lag_kernel);
+dispVars(N, params.Nfreq);
+dispVars(params.method);
 % generate the TFD
-[qtfd, g2] = qtfd_sep_kern(x, dopp_win, lag_win, N, Nfreq);
+[qtfd, g2] = qtfd_sep_kern(x, params.doppler_kernel, params.lag_kernel, N, params.Nfreq);
 % scale
 [qtfd, scale_factor] = scale_tfd(qtfd, g2, N);
 
@@ -61,13 +67,6 @@ end
 % 2. estimate tracks (from peaks) and pick components in TF domain
 %---------------------------------------------------------------------
 [if_tracks, f_scale, t_scale] = find_tracks(qtfd, Fs, N, params, tfd_limits_freq);
-
-% using Nathan's IF extraction method
-% scale_Nfreq = (size(qtfd, 2) / size(qtfd, 1));
-% l1 = round(7 * scale_Nfreq);
-% l2 = round(3 * scale_Nfreq);
-% [el1, ei1] = find_components_NS(qtfd', l1, l2, 32);
-% if_tracks = cellfun(@(x) fliplr(x), el1, 'un', false);
 
 % limit number of components:
 if_tracks = if_tracks(1:min(N_components, length(if_tracks)));
@@ -99,7 +98,7 @@ s_all = sum(cat(2, s_nophase{:}), 2);
 % b. X-TFD between original signal and sin-model (without IP):
 if(params.phase_correction)
 
-    xtf = xtfd_sep_kern(x, s_all, dopp_win, lag_win, N, Nfreq);
+    xtf = xtfd_sep_kern(x, s_all, params.doppler_kernel, params.lag_kernel, N, params.Nfreq);
     
     % c. estimate phase from X-TFD (using IF locations):
     ip_tracks = get_phase(if_tracks, xtf);
@@ -189,19 +188,6 @@ end
 
 
 
-
-
-function [lag_win, dopp_win, Nfreq] = get_kernel_windows(params, N)
-%---------------------------------------------------------------------
-% assemble the lag and Doppler kernel windows
-%---------------------------------------------------------------------
-lag_win = params.lag_kernel;
-dopp_win = params.doppler_kernel(N);
-Nfreq = params.Nfreq;
-
-% make sure that Doppler/lag windows are odd:
-lag_win{1} = make_odd(lag_win{1});
-dopp_win{1} = make_odd(dopp_win{1});
 
 
 function y = combine_one_signal(x_comps)

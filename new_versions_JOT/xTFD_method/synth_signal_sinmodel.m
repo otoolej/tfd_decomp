@@ -17,8 +17,10 @@
 %     
 %
 
-% John M. O' Toole, University of Deusto
-% Started: 04-05-2012
+% John M. O' Toole, University College Cork
+% Started: 18-09-2020
+%
+% last update: Time-stamp: <2022-04-20 16:08:36 (otoolej)>
 %-------------------------------------------------------------------------------
 function s_est_tracks = synth_signal_sinmodel(if_tracks, ip_tracks, S, Fs, ia_tracks, g2)
 if(nargin < 2 || isempty(ip_tracks)), ip_tracks=[]; end

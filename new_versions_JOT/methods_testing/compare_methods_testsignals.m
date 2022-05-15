@@ -16,12 +16,12 @@
 % John M. O' Toole, University College Cork
 % Started: 03-09-2021
 %
-% last update: Time-stamp: <2021-11-30 18:20:52 (otoolej)>
+% last update: Time-stamp: <2022-04-21 15:03:11 (otoolej)>
 %-------------------------------------------------------------------------------
-function [x, x_components, y, y_comps] = compare_methods_testsignals(signal_name, methods_subset)
+function [x, x_components, y, y_comps] = compare_methods_testsignals(signal_name, methods_subset, dbplot)
 if(nargin < 1 || isempty(signal_name)), signal_name = 'lfm1'; end
 if(nargin < 2 || isempty(methods_subset)), methods_subset = {'xTFD', 'WSST'}; end
-
+if(nargin < 3 || isempty(dbplot)), dbplot = false; end
 
 
 
@@ -78,10 +78,10 @@ for n = 1:length(methods_subset)
     % dispVars(methods_subset{n});
     % disp(p_st.params);
 
-    [y, y_comps] = decomp_all_methods(x, Fs, methods_subset{n}, N_components, params, true);
+    [y, y_comps] = decomp_all_methods(x, Fs, methods_subset{n}, N_components, params, dbplot);
 
     y = y(:);
-    if(db_plot)
+    if(db_plot && ~isempty(y))
         err_plot(x, y_comps, y, 2000 + n * 100, methods_subset{n});
     end
 
@@ -101,9 +101,10 @@ for n = 1:length(methods_subset)
 
         diff_l2 = sqrt(sum(abs(x_components{isort(1)}(:)' - yc(:).') .^ 2));
         comp_l2 = sqrt(sum(abs(x_components{isort(1)}) .^ 2));
+        rerr_tmp = [rerr_tmp (diff_l2 / comp_l2)];                
         rr = corrcoef(x_components{isort(1)}(:), yc(:));
         mse_tmp = [mse_tmp rr(1, 2)];
-        rerr_tmp = [rerr_tmp (diff_l2 / comp_l2)];        
+
         
     end
     % dispVars(mse_tmp);
@@ -122,37 +123,9 @@ for n = 1:length(methods_subset)
 end
 
 fprintf('signal %s:\n', signal_name);
-print_table([mse_all{:}; re_all{:}; snr_all{:}]', {'MSE', 'RE', 'SNR'}, ...
+print_table([mse_all{:}; re_all{:}; snr_all{:}]', {'CORR', 'RE', 'SNR'}, ...
             methods_subset, [], [], [4]);
 % print_table(mse_all', {'MSE'}, methods_subset);
 
 
 
-function y = pad_signal(x, L, type)
-%---------------------------------------------------------------------
-% mirror extrapolation
-%---------------------------------------------------------------------
-if(nargin < 2 || isempty(L)), L = []; end
-if(nargin < 3 || isempty(type)), type = 'zero'; end
-
-
-N = length(x);
-if(isempty(L))
-    L = floor(N / 16);
-end
-
-switch type
-  case 'neg_windowed'
-    % positive mirror extrapolation    
-    wpad = hamming(2 * L - 1)';
-    y = [wpad(1:L) .* fliplr(-x(2:L + 1)) x fliplr(wpad(1:L) .* -x(end - L:end - 1))];
-
-  case 'neg'
-    y = [fliplr(-x(2:L + 1)) x fliplr(-x(end - L:end - 1))];
-
-  case 'pos'
-    y = [fliplr(x(2:L + 1)) x fliplr(x(end - L:end - 1))];
-
-  case 'zero'
-    y = [zeros(1, L) x zeros(1, L)];
-end

@@ -17,7 +17,7 @@
 % John M. O' Toole, University College Cork
 % Started: 17-09-2021
 %
-% last update: Time-stamp: <2021-11-30 18:11:11 (otoolej)>
+% last update: Time-stamp: <2022-04-21 16:25:49 (otoolej)>
 %-------------------------------------------------------------------------------
 function [y, y_comps] = decomp_all_methods(x, Fs, method, N_components, params, db_plot)
 if(nargin < 4 || isempty(N_components)), N_components = 1; end
@@ -48,7 +48,8 @@ switch upper(method)
     %---------------------------------------------------------------------
     % cross TFD
     %---------------------------------------------------------------------
-    [y, ~, y_comps] = extract_components_xTFD(x, Fs, params, N_components, db_plot, []);
+    % [y, ~, y_comps] = extract_components_xTFD(x, Fs, params, N_components, db_plot, []);
+    [y, y_comps] = tfd_decomposition(x, 'xtfd', N_components, params, db_plot);
 
 
   case {'IXTFD'}
@@ -65,15 +66,17 @@ switch upper(method)
     %---------------------------------------------------------------------
     % time-varying filtering
     %---------------------------------------------------------------------
-    d = tf_decomposition_v1_JOT(x, params, N_components, db_plot);
+    % d = tf_decomposition_v1_JOT(x, params, N_components, db_plot);
 
-    if(size(d, 1) < N_components)
-        N_components = size(d, 1);
-    end
-    d = d(1:N_components, :);
+    % if(size(d, 1) < N_components)
+    %     N_components = size(d, 1);
+    % end
+    % d = d(1:N_components, :);
 
-    y_comps = num2cell(d, 2);
-    y = nansum(d, 1).';
+    % y_comps = num2cell(d, 2);
+    % y = nansum(d, 1).';
+
+    [y, y_comps] = tfd_decomposition(x, 'tvfilt', N_components, params, db_plot);
 
   case {'ITVFILT'}
     %---------------------------------------------------------------------
@@ -160,6 +163,8 @@ switch upper(method)
         for p = 1:(N_components - length(y_comps))
             y_comps = [y_comps; {zeros(1, length(x))}];
         end
+    else
+        y_comps = y_comps(1:N_components, :);
     end
 
     y = sum(imfs, 1);
