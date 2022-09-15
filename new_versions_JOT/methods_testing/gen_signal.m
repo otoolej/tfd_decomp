@@ -216,7 +216,7 @@ if(DBplot)
 end
 
 
-energy_fund = nanmean(abs(y) .^ 2);
+energy_fund=getEnorm(y);
 if(DBtest) if_laws_test=iflaw; end
 
 

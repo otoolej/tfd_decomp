@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-11-2021
 %
-% last update: Time-stamp: <2022-04-25 12:29:01 (otoolej)>
+% last update: Time-stamp: <2021-11-19 12:35:40 (otoolej)>
 %-------------------------------------------------------------------------------
 function compare_methods_noise_signals_plot(method_str, print_)
 if(nargin < 1 || isempty(method_str)), method_str = 'vmd'; end
@@ -25,7 +25,7 @@ if(nargin < 2 || isempty(print_)), print_ = false; end
 
 
 FONT_NAME = 'helvetica';
-FONT_SIZE = 13;
+FONT_SIZE = 10;
 
 all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'msst', 'vmd'};
 
@@ -79,8 +79,8 @@ lred = lc(3, :);
 hp(1).Color = lblue;
 
 if(print_)
-    % print(['pics/noise_test/noise_ffgn_test_comps_' method_str '_v2.svg'], '-dsvg');
-    print2eps(['pics/noise_test/noise_ffgn_test_comps_' method_str '_v2.eps']);
+    print(['pics/noise_test/noise_ffgn_test_comps_' method_str '.svg'], '-dsvg');
+    print2eps(['pics/noise_test/noise_ffgn_test_comps_' method_str '.eps']);
 end
 
 
@@ -88,7 +88,7 @@ end
 % error plot
 %---------------------------------------------------------------------
 
-subplot = @(n, m, p) subtightplot(n, m, p, [0.1, 0.1], [0.23, 0.05], [0.1, 0.01]);
+subplot = @(n, m, p) subtightplot(n, m, p, [0.1, 0.1], [0.2, 0.05], [0.1, 0.01]);
 
 set_figure(901);
 pp = get(gcf, 'position');
@@ -98,28 +98,19 @@ hx(1) = subplot(2, 1, 1); hold all;
 plot(x, '-o', 'markersize', 2, 'color', lblue);
 plot(y, '-+', 'markersize', 2, 'color', lred);
 ys = ylim();
-hleg = legend({'signal', 'estimate'}, 'location', 'southeast', ...
-              'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
-hleg.Position = [0.7272 0.5452 0.2466 0.1706];
+legend({'signal', 'estimate'}, 'location', 'southeast', ...
+      'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
 xlim([0 length(x)]);
-ylim([-3, 3]);
-set(hx(1), 'ytick', [-3,0, 3]);
 set(hx(1), 'xticklabels', []);
 hx(1).XAxis.Visible = 'off';
-hx(1).Clipping = 'off';
 
 hx(2) = subplot(2, 1, 2); hold all;
 plot(x - y, '-', 'color', lblue);
 ylim(ys);
-legend({'residual'}, 'location', 'southeast', ...
+legend({'error'}, 'location', 'southeast', ...
        'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
 xlim([0 length(x)]);
-ylim([-2, 2]);
-ylim([-3, 3]);
-set(hx(2), 'ytick', [-3,0, 3]);
 xlabel('samples');
-hx(2).Clipping = 'off';
-
 
 set_gca_fonts(FONT_NAME, FONT_SIZE, hx);
 
@@ -127,6 +118,6 @@ set_gca_fonts(FONT_NAME, FONT_SIZE, hx);
 
 
 if(print_)
-    % print(['pics/noise_test/noise_ffgn_test_error_' method_str '_v2.svg'], '-dsvg');
-    print2eps(['pics/noise_test/noise_ffgn_test_error_' method_str '_v2.eps']);
+    print(['pics/noise_test/noise_ffgn_test_error_' method_str '.svg'], '-dsvg');
+    print2eps(['pics/noise_test/noise_ffgn_test_error_' method_str '.eps']);
 end

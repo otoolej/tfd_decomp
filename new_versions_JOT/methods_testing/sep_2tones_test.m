@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 14-09-2021
 %
-% last update: Time-stamp: <2022-04-22 17:58:52 (otoolej)>
+% last update: Time-stamp: <2021-11-23 17:31:10 (otoolej)>
 %-------------------------------------------------------------------------------
 function re = sep_2tones_test(method, time_mask, save_, db_plot, L_grid)
 if(nargin < 1 || isempty(method)), method = 'xTFD'; end
@@ -58,17 +58,22 @@ f_ratio = f1 ./ f0;
 %---------------------------------------------------------------------
 % parameters for the methods
 %---------------------------------------------------------------------
-tvfilt = decomp_params(N, 'tvfilt');
-% tvfilt.doppler_kernel = {31, 'hamm'};
-tvfilt.lag_kernel = {67, 'dolph', 100};
-tvfilt.qtfd_max_thres = [];
-
-
-xtfd = decomp_params(N, 'xtfd');
-xtfd.lag_kernel = {67, 'dolph', 100};
-xtfd.Nfreq = N * 32;
-
-
+tvfilt = tvfilt_params(N);
+tvfilt.wx = 37;
+if(~time_mask)
+    tvfilt.len1 = 512;    
+end
+tvemd.bwr = 0.05;
+xtfd = decomp_params();
+if(~time_mask)
+    xtfd.lag_kernel = {67, 'dolph', 100};
+else
+    xtfd.lag_kernel = {67, 'dolph', 100};
+end
+xtfd.min_if_length = 4;
+% xtfd.doppler_kernel = @(x){37, 'hann', 100};
+% xtfd.delta_search_freq = 10;
+% xtfd.Nfreq = N;
 if(~time_mask)
     ssst.window = chebwin(67, 100);
 else
@@ -84,8 +89,6 @@ ncme.estIF = [250 .* ones(1, N); 400 .* ones(1, N)];
 ncme.lambda = 1000;
 ncme.beta = 8e-6;
 ncme.tol = 1e-9;
-
-tvemd.bwr = 0.05;
 
 all_params(1) = struct('method', 'xtfd', 'params', xtfd);
 all_params(2) = struct('method', 'tvfilt', 'params', tvfilt);
@@ -138,6 +141,12 @@ for k = 1:L_freq
         end
 
 
+        % TMP
+        % params.estIF = [round(f1(k) * N / 32) .* ones(1, N); 400 .* ones(1, N)];
+
+        % if(strcmp(upper(method), 'EMD'))        
+        %     x_comp{2} = upsample(x_comp{2}, up_factor);
+        % end
         x = x_comp{1} + x_comp{2};
 
 
@@ -189,7 +198,7 @@ if(save_)
     end
 
     time_now = now;
-    save(['./data/tones_test_' method tstr '_v2.mat'], 're', 'amp_ratio', 'f_ratio', ...
+    save(['./data/tones_test_' method tstr '.mat'], 're', 'amp_ratio', 'f_ratio', ...
         'time_now');
 end
 
