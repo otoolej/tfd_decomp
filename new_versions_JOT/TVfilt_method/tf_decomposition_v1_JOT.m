@@ -39,10 +39,8 @@ N = length(signal1);
 % generate separable-kernel TFD:
 %---------------------------------------------------------------------
 qtfd = qtfd_sep_kern(signal1, params.doppler_kernel, params.lag_kernel, N, N);
-% qtfd = qtfd_sep_kern(signal1, {params.wx, 'hann'}, {params.wx, 'dolph', 100}, N, N);
 
 
-% dispVars(size(tfrep));
 if(db_plot)
     set_figure(2001); 
     vtfd(qtfd);

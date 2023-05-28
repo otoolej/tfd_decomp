@@ -22,7 +22,7 @@
 % John M. O' Toole, University College Cork
 % Started: 20-04-2022
 %
-% last update: Time-stamp: <2022-04-20 15:57:43 (otoolej)>
+% last update: Time-stamp: <2023-05-28 20:12:42 (otoolej)>
 %-------------------------------------------------------------------------------
 function [y, y_comps] = tfd_decomposition(x, method, N_components, params, db_plot)
 if(nargin < 2 || isempty(method)), method = 'tvfilt'; end
@@ -79,7 +79,6 @@ end
 
 if(params.pad_signal)
     y = y(floor(Lpad / 2) + 1:end - floor(Lpad / 2));
-    % x_residual = x_residual(floor(Lpad / 2) + 1:end - floor(Lpad / 2));
     for p = 1:length(y_comps)
         y_comps{p} = y_comps{p}(floor(Lpad / 2) + 1:end - floor(Lpad / 2));
     end

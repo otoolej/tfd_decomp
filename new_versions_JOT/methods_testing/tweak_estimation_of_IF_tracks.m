@@ -6,6 +6,7 @@
 
 d = load('batsignal');
 x = d.batsignal; 
+N = length(d.batsignal)
 params = decomp_params(length(x), 'XTFD');
 params.max_no_peaks = Inf;
 params.lag_kernel = {63, 'dolph', 100};
