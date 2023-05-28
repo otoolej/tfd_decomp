@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 24-09-2021
 %
-% last update: Time-stamp: <2021-12-06 11:01:02 (otoolej)>
+% last update: Time-stamp: <2022-04-24 12:32:18 (otoolej)>
 %-------------------------------------------------------------------------------
 function [x, x_components, Fs, all_params] = select_signal_withparams(signal_name, db_plot)
 if(nargin < 2 || isempty(db_plot)), db_plot = false; end
@@ -29,6 +29,46 @@ if(nargin < 2 || isempty(db_plot)), db_plot = false; end
 [x_nlfm, x_nlfm_comps, x_lfm_comps] = nlfm_test_signals(false);
 Fs = 30;
 N = 256;
+
+% find length of signal (for setting default parameters)
+if(strcmp(signal_name, 'bat'))
+    d = load('batsignal');
+    N = length(d.batsignal);
+
+elseif(strcmp(signal_name(1:4), 'nlfm'))
+    idx = str2num(signal_name(end));
+    if(iscell(x_nlfm_comps{idx}))
+        N = length(x_nlfm_comps{idx}{1});
+    else
+        N = length(x_nlfm_comps{idx});
+    end
+
+elseif(strcmp(signal_name(1:3), 'nnl'))
+    idx = str2num(signal_name(end));
+    N = length(x_nlfm{idx});
+    
+elseif(strcmp(signal_name(1:3), 'lfm'))
+    idx = str2num(signal_name(end));
+    if(iscell(x_lfm_comps{idx}))
+        N = length(x_lfm_comps{idx}{1});
+    else
+        N = length(x_lfm_comps{idx});
+    end
+
+elseif(strcmp(signal_name, 'noise'))
+    N = 256;
+
+elseif(strcmp(signal_name, 'msst2'))    
+    N = 400;
+    
+elseif(strcmp(signal_name, 'msst_test'))    
+    N = 400;
+
+elseif(strcmp(signal_name, 'vmd_test'))
+    N = 1000;
+end
+dispVars(N);
+
 
 
 %---------------------------------------------------------------------
@@ -50,7 +90,7 @@ switch signal_name
     N_components = 1;
 
     vmd.alpha = 1e-4;
-    xtfd.lag_kernel = {67, 'dolph', 100};
+    % xtfd = xtfd.set_lag_kernel(67);
     ssst.window = chebwin(61, 100);
     wsst.window = 'amor';
     vncmd.estIF = 100 * ones(1, length(x));
@@ -89,7 +129,7 @@ switch signal_name
     % N_components = 1;
 
     if(idx == 4)
-        xtfd.lag_kernel = {63, 'dolph', 100};        
+        xtfd = xtfd.set_lag_kernel(63);
         ssst.window = chebwin(63, 100);
 
         vmd.alpha = 10;
@@ -102,8 +142,9 @@ switch signal_name
         ncme.beta = 1;
         
     elseif(idx == 5)
-        xtfd.lag_kernel = {127, 'dolph', 100};
-        xtfd.doppler_kernel = @(x){27, 'hamm', 100};        
+        xtfd = xtfd.set_lag_kernel(127);
+        xtfd = xtfd.set_dopp_kernel(27);        
+        % xtfd.doppler_kernel = @(x){27, 'hamm', 100};        
         ssst.window = chebwin(227, 100);
         tvfilt.wx = 67;
 
@@ -153,7 +194,7 @@ switch signal_name
     vncmd.beta = 1;
 
     % xtfd.lag_kernel = {127, 'dolph', 100};
-    xtfd.doppler_kernel = @(x){27, 'hamm', 100};        
+    xtfd = xtfd.set_dopp_kernel(27); 
     ssst.window = chebwin(227, 100);
     tvfilt.wx = 27;
     % tvfilt.M = 21;
@@ -169,7 +210,7 @@ switch signal_name
     x_components = {sin(2*pi*(40*t + 1*sin(1.5*t))); sin(2*pi*(17*t + 6*sin(1.5*t)))};
     N_components = 2;
 
-    xtfd.lag_kernel = {63, 'dolph', 100};        
+    xtfd = xtfd.set_lag_kernel(63, {'dolph', 100});        
     ssst.window = chebwin(63, 100);
 
     vmd.alpha = 10;
@@ -199,7 +240,7 @@ switch signal_name
     Fs = 100;
     
 
-    xtfd.lag_kernel = {127, 'dolph', 100};        
+    xtfd = xtfd.set_lag_kernel(27, {'dolph', 100});        
     
 
   case {'nlfm4', 'nlfm5', 'nlfm6'}
@@ -209,7 +250,45 @@ switch signal_name
     N_components = 3;
 
     vncmd.estIF = [80 * ones(1, length(x)); 100 * ones(1, length(x)); ...
+                   150 * ones(1, length(x))];
+
+  case {'nnlfm4', 'nnlfm5', 'nnlfm6'}
+    % same as previous but with noise
+    idx = str2num(signal_name(end));    
+    x = x_nlfm{idx};
+    x_components = x_nlfm_comps{idx};
+    N_components = 3;
+
+    d = load('data/ffgn_1_02_1_512_0_signal.mat');
+    n = d.x(1:256);
+    n = n .* (0.6081);
+    
+    % rng(1);
+    % n = randn(size(x)) * 0.55;
+    fprintf('SNR=%g (dB)\n', 10 * log10(sum(abs(x) .^ 2) / sum(abs(n) .^ 2)));
+    x = x + n;
+
+    xtfd = xtfd.set_dopp_kernel(67, {'hamm'});
+    xtfd = xtfd.set_lag_kernel( 101, {'dolph', 100});
+    % default is fine but to harmonize with 'tvfilt' then:
+    xtfd.min_if_length = 64;
+
+    % xtfd.doppler_kernel =  @(x){51, 'hamm'};
+    % tvfilt.wx = 27;
+
+    tvfilt = tvfilt.set_dopp_kernel(67, {'hamm'});
+    tvfilt = tvfilt.set_lag_kernel( 101, {'dolph', 100});
+    tvfilt.qtfd_max_thres = [];
+    tvfilt.len1 = 64;
+
+    % x_components{4} = n;
+    % N_components = 4;
+
+
+    vncmd.estIF = [80 * ones(1, length(x)); 100 * ones(1, length(x)); ...
                   150 * ones(1, length(x))];
+
+    
 
   case {'nlfm7'}
     % from the VNCMD paper
@@ -222,7 +301,7 @@ switch signal_name
     x = x +  (0.8 .* randn(1, length(x)));
     vncmd.estIF = [100 * ones(1, length(x))];
 
-    xtfd.lag_kernel = {223, 'dolph', 100};
+    % xtfd = xtfd.set_lag_kernel(223, {'dolph', 100});
     ssst.window = chebwin(223, 100);
     
     
@@ -234,7 +313,8 @@ switch signal_name
     N_components = 2;
     Fs = 200;
     
-    xtfd.lag_kernel = {23, 'dolph', 100};
+    xtfd = xtfd.set_lag_kernel(33, {'dolph', 100});
+    % xtfd = xtfd.set_dopp_kernel(1127, {'hamm'});    
     % xtfd.doppler_kernel = @(x){27, 'hamm', 100};            
     ssst.window = chebwin(63, 100);
     vncmd.estIF = [50 * ones(1, length(x)); 100 * ones(1, length(x))];
@@ -242,20 +322,29 @@ switch signal_name
 
   case 'noise'
     d = load('data/ffgn_1_02_1_512_0_signal.mat');
-    x = d.x;
+    x = d.x(1:256);
     % x = ffgn(1, 0.2, 1, 512, 0);
     % detrend:
     % y = filt_butterworth(x, 1, 0.05, [], 7, false);
     % x = x - y;
-    x_components = {x, x, x, x, x, x, x, x, x, x, ...
-                    x, x, x, x, x, x, x, x, x, x};
     N_components = 20;
-    xtfd.lag_kernel = {17, 'dolph', 100};
-    % xtfd.doppler_kernel = @(x){33, 'hamm'};
-    xtfd.delta_search_freq = 1000;
-    xtfd.max_no_peaks = 200;
+    for n = 1:N_components
+        x_components{n} = x;
+    end
+    % xtfd.lag_kernel = {17, 'dolph', 100};
+    xtfd = xtfd.set_lag_kernel(33, {'dolph', 100});
+    % xtfd = xtfd.set_dopp_kernel(63, {'hamm'});    
+    % xtfd.delta_search_freq = 1000;
+    % xtfd.max_no_peaks = 200;
     % xtfd.Nfreq = 512;
-    tvfilt.wx = 17;
+    % tvfilt.wx = 17;
+    % disp(tvfilt);
+    % tvfilt.lag_kernel = {57, 'dolph', 100};
+    % tvfilt.doppler_kernel = {33, 'hamm'};
+    tvfilt = tvfilt.set_dopp_kernel(33, {'hamm'});
+    % tvfilt = tvfilt.set_lag_kernel(13, {'dolph', 100});
+    % tvfilt.qtfd_max_thres = [];
+    tvemd.bwr = 0.1;
 
     
 
@@ -268,8 +357,8 @@ switch signal_name
         x_components{p} = x;
     end
 
-    xtfd.lag_kernel = {63, 'dolph', 100};
-    xtfd.doppler_kernel = @(x){63, 'hamm'};    
+    xtfd = xtfd.set_lag_kernel(63, {'dolph', 100});
+    xtfd = xtfd.set_dopp_kernel(63, {'hamm'});    
     ssst.window = chebwin(63, 100);
     vncmd.estIF = [50 * ones(1, length(x)); 80 * ones(1, length(x)); ...
                    100 * ones(1, length(x)); 200 * ones(1, length(x))];

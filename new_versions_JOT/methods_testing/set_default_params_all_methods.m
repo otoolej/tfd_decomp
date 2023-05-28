@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 24-09-2021
 %
-% last update: Time-stamp: <2021-11-30 17:54:35 (otoolej)>
+% last update: Time-stamp: <2022-04-15 16:54:17 (otoolej)>
 %-------------------------------------------------------------------------------
 function [xtfd, tvfilt, ssst, wsst, vmd, vncmd, tvemd, ncme, msst] = set_default_params_all_methods(N)
 if(nargin < 1 || isempty(N)), N = 256; end
@@ -27,11 +27,12 @@ if(nargin < 1 || isempty(N)), N = 256; end
 % 2. default parameters for all methods
 %---------------------------------------------------------------------
 % xTFD method
-xtfd = decomp_params;
-xtfd.lag_kernel = {63, 'dolph', 100};
+xtfd = decomp_params(N, 'xtfd');
+
 
 % TV filtering method
-tvfilt = tvfilt_params(N);
+% tvfilt = tvfilt_params(N);
+tvfilt = decomp_params(N, 'tvfilt');
 
 
 % STFT synchrosqueeze:

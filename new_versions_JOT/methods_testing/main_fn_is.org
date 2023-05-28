@@ -14,7 +14,7 @@
       sep_2tones_test('efd', false, true, false, 50);
       sep_2tones_test('xTFD', false, true, false, 50);
       sep_2tones_test('tvfilt', false, true, false, 50);            
-      
+
       % and plot all:
       plot_2tone_tests_compare(false);
     #+END_SRC
