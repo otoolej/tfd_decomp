@@ -20,7 +20,7 @@
 % John M. O' Toole, University College Cork
 % Started: 18-09-2020
 %
-% last update: Time-stamp: <2022-04-20 16:08:36 (otoolej)>
+% last update: Time-stamp: <2023-07-01 08:47:56 (otoolej)>
 %-------------------------------------------------------------------------------
 function s_est_tracks = synth_signal_sinmodel(if_tracks, ip_tracks, S, Fs, ia_tracks, g2)
 if(nargin < 2 || isempty(ip_tracks)), ip_tracks=[]; end
@@ -89,7 +89,6 @@ for it = 1:Ntracks
 
         norm_factor = bw_freq;
 
-        % bw_all = zeros(1, L);
         for mm = 1:L
             bw = get_bandwidth(Smag(cur_track(mm, 1), :), cur_track(mm, 2), half_amp);
             % dispVars(norm_factor, bw, bw / norm_factor);
@@ -97,7 +96,6 @@ for it = 1:Ntracks
 
             if(~isempty(bw) && bw > 1)
                 amp_track(mm) = amp_track(mm) .* (bw / norm_factor);
-                % bw_all(mm) = bw / norm_factor;
             end
         end
         % stats_summary_vector(bw_all, 2);

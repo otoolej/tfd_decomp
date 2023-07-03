@@ -1,4 +1,4 @@
-function decomp = tf_decomposition_v1_JOT(signal1, params, N_components, db_plot)
+function decomp = tf_decomposition_tvfilt(signal1, params, N_components, db_plot)
 %
 %
 %  Note TFD will be NxN (initially) where N is the signal length; TFD,
@@ -12,9 +12,9 @@ function decomp = tf_decomposition_v1_JOT(signal1, params, N_components, db_plot
 %  Can change. 0 = don't whiten, 1 = whiten
 %
 %  FIND COMPONENT inputs:
-%  bw - search range in terms of frequency/bandwidth in samples
+%  delta_freq_samples - search range in terms of frequency/bandwidth in samples
 %  fw - search range in terms of time
-%  len1 - minimum component length
+%  min_if_length - minimum component length
 %
 % 
 %
@@ -40,7 +40,7 @@ N = length(signal1);
 %---------------------------------------------------------------------
 qtfd = qtfd_sep_kern(signal1, params.doppler_kernel, params.lag_kernel, N, N);
 
-
+db_plot = true;
 if(db_plot)
     set_figure(2001); 
     vtfd(qtfd);
@@ -51,9 +51,9 @@ end
 %---------------------------------------------------------------------
 % extract IF components from TFD
 %---------------------------------------------------------------------
-% [el1, ei1] = find_components_v2(qtfd', qtfd', params.bw, params.fw, params.len1);
 [el1, ei1] = if_tracks_MCQmethod(qtfd, N, 1, ...
-                                 params.bw, params.fw, params.len1, ...
+                                 params.delta_freq_samples, ...
+                                 params.min_if_length, ...
                                  params.max_no_peaks, ...
                                  params.qtfd_max_thres);
 
@@ -61,7 +61,7 @@ end
 %---------------------------------------------------------------------
 % do the TV filtering
 %---------------------------------------------------------------------
-decomp = tv_filtering_JOT(el1, ei1, signal1, qtfd', params.L_filt, 'lossless', N_components);
+decomp = tv_filtering(el1, ei1, signal1, qtfd', params.L_filt, 'lossless', N_components);
 
 
 % remove zero-padding

@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 24-09-2021
 %
-% last update: Time-stamp: <2022-04-24 12:32:18 (otoolej)>
+% last update: Time-stamp: <2023-07-02 11:08:34 (otoolej)>
 %-------------------------------------------------------------------------------
 function [x, x_components, Fs, all_params] = select_signal_withparams(signal_name, db_plot)
 if(nargin < 2 || isempty(db_plot)), db_plot = false; end
@@ -259,7 +259,7 @@ switch signal_name
     x_components = x_nlfm_comps{idx};
     N_components = 3;
 
-    d = load('data/ffgn_1_02_1_512_0_signal.mat');
+    d = load('data/test_signals/ffgn_1_02_1_512_0_signal.mat');
     n = d.x(1:256);
     n = n .* (0.6081);
     
@@ -271,15 +271,13 @@ switch signal_name
     xtfd = xtfd.set_dopp_kernel(67, {'hamm'});
     xtfd = xtfd.set_lag_kernel( 101, {'dolph', 100});
     % default is fine but to harmonize with 'tvfilt' then:
-    xtfd.min_if_length = 64;
+    % xtfd.min_if_length = 64;
 
-    % xtfd.doppler_kernel =  @(x){51, 'hamm'};
-    % tvfilt.wx = 27;
 
     tvfilt = tvfilt.set_dopp_kernel(67, {'hamm'});
     tvfilt = tvfilt.set_lag_kernel( 101, {'dolph', 100});
     tvfilt.qtfd_max_thres = [];
-    tvfilt.len1 = 64;
+    % tvfilt.min_if_length = 64;
 
     % x_components{4} = n;
     % N_components = 4;
@@ -321,7 +319,7 @@ switch signal_name
 
 
   case 'noise'
-    d = load('data/ffgn_1_02_1_512_0_signal.mat');
+    d = load('data/test_signals/ffgn_1_02_1_512_0_signal.mat');
     x = d.x(1:256);
     % x = ffgn(1, 0.2, 1, 512, 0);
     % detrend:
@@ -332,7 +330,14 @@ switch signal_name
         x_components{n} = x;
     end
     % xtfd.lag_kernel = {17, 'dolph', 100};
+    % xtfd = xtfd.set_lag_kernel(13, {'dolph', 100});
     xtfd = xtfd.set_lag_kernel(33, {'dolph', 100});
+    tvfilt.min_if_length = 32;
+    % xtfd = xtfd.set_dopp_kernel(101, {'hamm'});    
+    
+    % xtfd = xtfd.set_dopp_kernel(33, {'hamm'});
+    % xtfd = xtfd.set_lag_kernel(17, {'dolph', 100});
+    
     % xtfd = xtfd.set_dopp_kernel(63, {'hamm'});    
     % xtfd.delta_search_freq = 1000;
     % xtfd.max_no_peaks = 200;
@@ -342,8 +347,8 @@ switch signal_name
     % tvfilt.lag_kernel = {57, 'dolph', 100};
     % tvfilt.doppler_kernel = {33, 'hamm'};
     tvfilt = tvfilt.set_dopp_kernel(33, {'hamm'});
-    % tvfilt = tvfilt.set_lag_kernel(13, {'dolph', 100});
-    % tvfilt.qtfd_max_thres = [];
+    tvfilt = tvfilt.set_lag_kernel(13, {'dolph', 100});
+    tvfilt.min_if_length = 32;
     tvemd.bwr = 0.1;
 
     
@@ -359,6 +364,9 @@ switch signal_name
 
     xtfd = xtfd.set_lag_kernel(63, {'dolph', 100});
     xtfd = xtfd.set_dopp_kernel(63, {'hamm'});    
+    % set longer IF length here for both the xTFD and TV filt. method
+    % xtfd.min_if_length = 80;
+    
     ssst.window = chebwin(63, 100);
     vncmd.estIF = [50 * ones(1, length(x)); 80 * ones(1, length(x)); ...
                    100 * ones(1, length(x)); 200 * ones(1, length(x))];
@@ -367,7 +375,8 @@ switch signal_name
     tvemd.bwr = 0.1;
     vmd.alpha = 1;
     msst.hlength = 60;
-    tvfilt.wx = 31;
+    % tvfilt.wx = 31;
+    % tvfilt.min_if_length = 80;
 
   otherwise
     error('what signal?');
@@ -393,3 +402,57 @@ if(db_plot)
     plot_components(x, x_components, 1, 222, length(x_components), false);
     title('test signals');
 end
+
+
+
+function [xtfd, tvfilt, ssst, wsst, vmd, vncmd, tvemd, ncme, msst] = ...
+    set_default_params_all_methods(N)
+%---------------------------------------------------------------------
+% default parameters for all methods
+%---------------------------------------------------------------------
+if(nargin < 1 || isempty(N)), N = 256; end
+
+
+%---------------------------------------------------------------------
+% 2. default parameters for all methods
+%---------------------------------------------------------------------
+% xTFD method
+xtfd = decomp_params(N, 'xtfd');
+
+
+% TV filtering method
+tvfilt = decomp_params(N, 'tvfilt');
+
+
+% STFT synchrosqueeze:
+ssst.window = chebwin(63, 100);
+% wavelet synchrosqueeze
+wsst.window = 'bump';
+
+% VMD
+vmd.alpha = 1e-4;
+vmd.tau = 0;
+vmd.DC = 0;
+vmd.init = 1;
+vmd.tol = 1e-9;
+
+% VNCMD
+vncmd.estIF = 1;
+vncmd.alpha = 1e-6;
+vncmd.beta = 5e-6;
+vncmd.var = 0;
+vncmd.tol = 1e-9;
+
+% TV-EMD
+tvemd.bwr = 0.01;
+
+
+% VNCMD
+ncme.estIF = floor(N / 2) .* ones(1, N);
+ncme.lambda = 100;
+ncme.beta = 5e-6;
+ncme.tol = 1e-9;
+
+
+% multisychronsqueezing transform
+msst.hlength = 50;

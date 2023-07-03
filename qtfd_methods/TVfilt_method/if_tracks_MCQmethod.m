@@ -1,15 +1,14 @@
 %-------------------------------------------------------------------------------
 % if_tracks_MCQmethod: wrapper to find_tracks.m file for TV-filt method
 %
-% Syntax: [if_tracks, tfd_mask] = if_tracks_MCQmethod(qtfd, N, Fs, bw, fw, len1, max_peaks, freq_limits)
+% Syntax: [if_tracks, tfd_mask] = if_tracks_MCQmethod(qtfd, N, Fs, bw, min_if_length, max_peaks, freq_limits)
 %
 % Inputs: 
 %     qtfd        - TFD matrix
 %     N           - signal length
 %     Fs          - sampling frequency
 %     bw          - maximum frequency shift to allow when joining tracks (in samples)
-%     fw          - currently NOT USED
-%     len1        - minimum length of IF track (in samples)
+%     min_if_length  - minimum length of IF track (in samples)
 %     max_peaks   - maximum number of peaks per time slice
 %     freq_limits - upper and lower bound frequencies to limit search area 
 % 
@@ -29,10 +28,10 @@
 % John M. O' Toole, University College Cork
 % Started: 14-04-2022
 %
-% last update: Time-stamp: <2022-04-20 15:17:03 (otoolej)>
+% last update: Time-stamp: <2023-07-02 07:24:23 (otoolej)>
 %-------------------------------------------------------------------------------
-function [if_tracks, tfd_mask] = if_tracks_MCQmethod(qtfd, N, Fs, bw, fw, len1, max_peaks, ...
-                                                     qtfd_max_thres, freq_limits)
+function [if_tracks, tfd_mask] = if_tracks_MCQmethod(qtfd, N, Fs, bw, min_if_length, max_peaks, ...
+                                                  qtfd_max_thres, freq_limits)
 if(nargin < 3 || isempty(Fs)), Fs = 1; end
 if(nargin < 8 || isempty(qtfd_max_thres)), qtfd_max_thres = []; end
 if(nargin < 9 || isempty(freq_limits)), freq_limits = []; end
@@ -53,14 +52,8 @@ end
 %---------------------------------------------------------------------
 % 1. set the parameters
 %---------------------------------------------------------------------
-% [Ntime, Nfreq] = size(qtfd);
-
-% dur = N / Fs;
-% t_scale = (dur / Ntime);
-% f_scale = (1 / Nfreq) * (Fs / 2);
-
 params_mcq.delta_search_freq = bw;
-params_mcq.min_if_length = len1;
+params_mcq.min_if_length = min_if_length;
 params_mcq.max_no_peaks = max_peaks;
 
 %---------------------------------------------------------------------

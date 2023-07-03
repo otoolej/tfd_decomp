@@ -1,4 +1,4 @@
-function decomp1 = tv_filtering_JOT(el1, ei1, signal1, tfrep1, M, bwf, N_components)
+function decomp1 = tv_filtering(el1, ei1, signal1, tfrep1, M, bwf, N_components)
 % This function applies a time-varying filter to a signal. The method is
 % currently based on FIR filters (window method), IIR versions should be
 % realtively trivial to implement
@@ -37,13 +37,12 @@ if(length(idx) < N_components)
 end
 
 
-%M = 127;
 % Do TV filtering
 alpha = (M-1)/2; 
 n = 0:M-1;
 decomp1 = zeros(N_components, N); %HDF = zeros(N,N/2); %HDF = tfp;
 disp('Decomposing Signal'); aa_old = 11;
-%bwf = 'variable';
+
 for jj = 1:N_components
     cx = el1{idx(jj)}; % take component defined by IF
     % DEFINE IF LAW for component jj

@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-11-2021
 %
-% last update: Time-stamp: <2022-04-25 10:33:41 (otoolej)>
+% last update: Time-stamp: <2023-07-02 09:51:23 (otoolej)>
 %-------------------------------------------------------------------------------
 function compare_methods_generic_signal_plot(method_str, signal_type, print_)
 if(nargin < 1 || isempty(method_str)), method_str = 'vmd'; end
@@ -36,7 +36,6 @@ end
 
 all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'msst', 'vmd'};
 
-% [x, x_components, y, y_comps] = compare_methods_testsignals('noise', {'tvfilt'});
 [x, x_components, y, y_comps] = compare_methods_testsignals(signal_type, {method_str}, false);
 
 %---------------------------------------------------------------------
@@ -150,7 +149,7 @@ ys = ylim;
 hx(2) = subplot(2, 1, 2); hold all;
 switch signal_type
   case 'nnlfm4'
-    d = load('data/ffgn_1_02_1_512_0_signal.mat');
+    d = load('data/test_signals/ffgn_1_02_1_512_0_signal.mat');
     n = d.x(1:256);
     n = n .* (0.6081);
 

@@ -22,7 +22,7 @@
 % John M. O' Toole, University College Cork
 % Started: 20-04-2022
 %
-% last update: Time-stamp: <2023-05-28 20:12:42 (otoolej)>
+% last update: Time-stamp: <2023-07-01 07:04:37 (otoolej)>
 %-------------------------------------------------------------------------------
 function [y, y_comps] = tfd_decomposition(x, method, N_components, params, db_plot)
 if(nargin < 2 || isempty(method)), method = 'tvfilt'; end
@@ -58,7 +58,7 @@ switch upper(method)
     %---------------------------------------------------------------------
     % time-varying filtering method
     %---------------------------------------------------------------------
-    d = tf_decomposition_v1_JOT(x, params, N_components, db_plot);
+    d = tf_decomposition_tvfilt(x, params, N_components, db_plot);
 
     if(size(d, 1) < N_components)
         N_components = size(d, 1);

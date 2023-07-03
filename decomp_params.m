@@ -6,9 +6,9 @@ classdef decomp_params
         %---------------------------------------------------------------------
         % edge-linking algorithm parameters (estimates the IF tracks)
         %---------------------------------------------------------------------
-        delta_search_freq = 20;  % max. rate-of-change of IF (Hz/s)
-        min_if_length = 1;       % min. IF length (seconds)
-        max_no_peaks = 8; % maximum number of peaks to consider for each time slice
+        max_no_peaks = 8; % maximum number of peaks to consider for each time slice        
+        delta_freq_samples  % max. rate-of-change of IF 
+        min_if_length       % min. IF length (seconds)
 
 
         %---------------------------------------------------------------------
@@ -29,11 +29,6 @@ classdef decomp_params
         % 
         % Hamming window for Doppler kernel and
         % Chebyshev window for the lag kernel at -100dB sidelobe suppression:
-        % (again, N is signal length)
-        % doppler_kernel = @(N) {floor(N / 4) - 1, 'hamm'};
-        % lag_kernel = @(N) {floor(N / 4) - 1, 'dolph', 100};
-        % doppler_kernel = @(N) {floor(N / 2) - 1, 'hamm'};                
-        % lag_kernel = {63, 'dolph', 100};
         doppler_kernel
         lag_kernel                
         dopp_kern_type = {'hamm'};
@@ -46,9 +41,6 @@ classdef decomp_params
         correct_amplitude_bw = true;
         % estimate the instantaneous phase from the cross-TFD
         phase_correction = true;
-        % interpolation of time-slice signal when estimating the -3dB point of peak:
-        % bw_interp_factor = @(N) if(N < 256) bw
-        
 
         %---------------------------------------------------------------------
         % preprocessing
@@ -56,20 +48,16 @@ classdef decomp_params
         pad_signal = false;
         low_pass_filter = false;
 
-
         %---------------------------------------------------------------------
         % general 
         %---------------------------------------------------------------------
         db_warn = true;
 
-
         %---------------------------------------------------------------------
         % TV filter parameters
         %---------------------------------------------------------------------
+        
         wx
-        bw
-        fw
-        len1
         L_filt
         qtfd_max_thres
 
@@ -99,6 +87,8 @@ classdef decomp_params
                 % set the default parameters for xTFD:
                 obj = obj.set_xtfd_params();
                 
+              otherwise 
+                error('either tvfilt or xtfd method');
             end
         end
 
@@ -111,12 +101,13 @@ classdef decomp_params
             % length of Doppler and lag window:
             obj.wx = make_odd(M);
 
-            % edge-linker parameters (max. bandwidth to search and ?)
-            obj.bw = make_odd(obj.N / obj.wx / 2);
-            obj.fw = make_odd(obj.N / obj.wx / 4);
+            % max. bandwidth for edge-linker parameters
+            % obj.delta_freq_samples = make_odd(obj.N / obj.wx / 2);
+            % obj.delta_freq_samples = floor(sqrt(obj.N) / 2);
+            obj.delta_freq_samples = floor(sqrt(obj.N) / 2);
             % minimum length of component:
-            obj.len1 = floor(obj.N / 8);
-            % obj.len1 = sqrt(N);
+            % obj.min_if_length = floor(obj.N / 8);
+            obj.min_if_length = floor(4 * sqrt(obj.N));            
 
             % filter length:
             obj.L_filt = make_odd(ceil(2 * M));
@@ -134,7 +125,8 @@ classdef decomp_params
         %---------------------------------------------------------------------
         % parameters for the xTFD method
         %---------------------------------------------------------------------
-            obj.min_if_length = floor(obj.N / 8);
+            obj.min_if_length = floor(4 * sqrt(obj.N));     
+            obj.delta_freq_samples = floor(sqrt(obj.N) / 2);            
 
             
             % length of Doppler and lag window:

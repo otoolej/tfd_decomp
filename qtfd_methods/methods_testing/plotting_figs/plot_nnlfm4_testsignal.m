@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 15-02-2022
 %
-% last update: Time-stamp: <2022-04-25 10:28:38 (otoolej)>
+% last update: Time-stamp: <2023-07-02 09:57:59 (otoolej)>
 %-------------------------------------------------------------------------------
 function plot_nnlfm4_testsignal(signal_type, print_)
 if(nargin < 1 || isempty(signal_type)), signal_type = 'nnlfm4'; end
@@ -44,7 +44,7 @@ switch signal_type
   case 'nnlfm4'
     x_noisy = x;
     x = select_signal_withparams('nlfm4', false);    
-    d = load('data/ffgn_1_02_1_512_0_signal.mat');
+    d = load('data/test_signals/ffgn_1_02_1_512_0_signal.mat');
     n = d.x(1:256);
     n = n .* (0.6081);
     y_comps{4} = n;

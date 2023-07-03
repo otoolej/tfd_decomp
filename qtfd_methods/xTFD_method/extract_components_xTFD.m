@@ -66,7 +66,7 @@ end
 %---------------------------------------------------------------------
 % 2. estimate tracks (from peaks) and pick components in TF domain
 %---------------------------------------------------------------------
-[if_tracks, f_scale, t_scale] = find_tracks(qtfd, Fs, N, params, tfd_limits_freq);
+[if_tracks, ~, ~] = find_tracks(qtfd, Fs, N, params, tfd_limits_freq);
 
 % limit number of components:
 if_tracks = if_tracks(1:min(N_components, length(if_tracks)));
