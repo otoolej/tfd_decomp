@@ -28,7 +28,7 @@
 % John M. O' Toole, University College Cork
 % Started: 14-04-2022
 %
-% last update: Time-stamp: <2023-07-02 07:24:23 (otoolej)>
+% last update: Time-stamp: <2023-07-03 03:26:34 (otoolej)>
 %-------------------------------------------------------------------------------
 function [if_tracks, tfd_mask] = if_tracks_MCQmethod(qtfd, N, Fs, bw, min_if_length, max_peaks, ...
                                                   qtfd_max_thres, freq_limits)
@@ -52,7 +52,7 @@ end
 %---------------------------------------------------------------------
 % 1. set the parameters
 %---------------------------------------------------------------------
-params_mcq.delta_search_freq = bw;
+params_mcq.delta_freq_samples = bw;
 params_mcq.min_if_length = min_if_length;
 params_mcq.max_no_peaks = max_peaks;
 

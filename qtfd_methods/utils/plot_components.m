@@ -31,6 +31,7 @@ SPACE_FACTOR = 0.3; % / abs(max(x) - min(x));
 
 
 
+
 % weed out any empty components:
 irem = [];
 for n = 1:length(components)
@@ -76,7 +77,8 @@ if(EQUAL_SPACING)
 else
     space = abs(ma(1:end-1))+abs(mi(2:end));
     % uncomment this for the overlapping signals (e.g. VMD for noise case)
-    space(space < 1) = 1;
+    space(space < 1) = 1.1;
+    
     shift = cumsum([0; space]);    
 end
 

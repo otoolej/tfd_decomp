@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 24-09-2021
 %
-% last update: Time-stamp: <2023-07-02 11:08:34 (otoolej)>
+% last update: Time-stamp: <2023-07-08 13:27:58 (otoolej)>
 %-------------------------------------------------------------------------------
 function [x, x_components, Fs, all_params] = select_signal_withparams(signal_name, db_plot)
 if(nargin < 2 || isempty(db_plot)), db_plot = false; end
@@ -96,7 +96,10 @@ switch signal_name
     vncmd.estIF = 100 * ones(1, length(x));
     vncmd.alpha = 8;
     vncmd.beta = 1e-6;
-    tvfilt.wx = 67;
+    wx = 67;
+    tvfilt = tvfilt.set_dopp_kernel(wx, {'hamm'});
+    tvfilt = tvfilt.set_lag_kernel(make_odd(ceil(wx * 1.5)), {'dolph', 100});
+
 
     ncme.estIF = vncmd.estIF;
     ncme.lambda = 10;
@@ -146,7 +149,10 @@ switch signal_name
         xtfd = xtfd.set_dopp_kernel(27);        
         % xtfd.doppler_kernel = @(x){27, 'hamm', 100};        
         ssst.window = chebwin(227, 100);
-        tvfilt.wx = 67;
+        wx = 67;
+        tvfilt = tvfilt.set_dopp_kernel(wx, {'hamm'});
+        tvfilt = tvfilt.set_lag_kernel(make_odd(ceil(wx * 1.5)), {'dolph', 100});
+        
 
         vmd.alpha = 100;
         % sensitive to this parameter
@@ -158,9 +164,6 @@ switch signal_name
         ncme.beta = 1;
 
     elseif(idx == 6)
-        % xtfd.lag_kernel = {67, 'dolph', 100};
-        % tvfilt.wx = 11;
-
 
         vmd.alpha = 100;
         % sensitive to this parameter
@@ -196,7 +199,10 @@ switch signal_name
     % xtfd.lag_kernel = {127, 'dolph', 100};
     xtfd = xtfd.set_dopp_kernel(27); 
     ssst.window = chebwin(227, 100);
-    tvfilt.wx = 27;
+    wx = 27;
+    tvfilt = tvfilt.set_dopp_kernel(wx, {'hamm'});
+    tvfilt = tvfilt.set_lag_kernel(make_odd(ceil(wx * 1.5)), {'dolph', 100});
+    
     % tvfilt.M = 21;
     
 
@@ -268,23 +274,29 @@ switch signal_name
     fprintf('SNR=%g (dB)\n', 10 * log10(sum(abs(x) .^ 2) / sum(abs(n) .^ 2)));
     x = x + n;
 
-    xtfd = xtfd.set_dopp_kernel(67, {'hamm'});
-    xtfd = xtfd.set_lag_kernel( 101, {'dolph', 100});
+    % xtfd = xtfd.set_dopp_kernel(67, {'hamm'});
+    % xtfd = xtfd.set_lag_kernel( 101, {'dolph', 100});
     % default is fine but to harmonize with 'tvfilt' then:
     % xtfd.min_if_length = 64;
 
 
-    tvfilt = tvfilt.set_dopp_kernel(67, {'hamm'});
-    tvfilt = tvfilt.set_lag_kernel( 101, {'dolph', 100});
+    l_dopp = make_odd(ceil(sqrt(N) * 5));
+    l_lag = make_odd(ceil(sqrt(N) * 7));    
+    
+    tvfilt = tvfilt.set_dopp_kernel(l_dopp, {'hamm'});
+    tvfilt = tvfilt.set_lag_kernel(l_lag, {'dolph', 100});
+    xtfd = xtfd.set_dopp_kernel(l_dopp, {'hamm'});
+    xtfd = xtfd.set_lag_kernel(l_lag, {'dolph', 100});
+    
     tvfilt.qtfd_max_thres = [];
     % tvfilt.min_if_length = 64;
-
+    % disp(tvfilt)
     % x_components{4} = n;
     % N_components = 4;
 
 
     vncmd.estIF = [80 * ones(1, length(x)); 100 * ones(1, length(x)); ...
-                  150 * ones(1, length(x))];
+                   150 * ones(1, length(x))];
 
     
 
@@ -330,19 +342,18 @@ switch signal_name
         x_components{n} = x;
     end
     % xtfd.lag_kernel = {17, 'dolph', 100};
-    % xtfd = xtfd.set_lag_kernel(13, {'dolph', 100});
     xtfd = xtfd.set_lag_kernel(33, {'dolph', 100});
-    tvfilt.min_if_length = 32;
+    % xtfd = xtfd.set_lag_kernel(33, {'dolph', 100});
+    xtfd.min_if_length = 32;
+    % xtfd.delta_freq_samples = 20;
     % xtfd = xtfd.set_dopp_kernel(101, {'hamm'});    
     
     % xtfd = xtfd.set_dopp_kernel(33, {'hamm'});
     % xtfd = xtfd.set_lag_kernel(17, {'dolph', 100});
     
     % xtfd = xtfd.set_dopp_kernel(63, {'hamm'});    
-    % xtfd.delta_search_freq = 1000;
     % xtfd.max_no_peaks = 200;
     % xtfd.Nfreq = 512;
-    % tvfilt.wx = 17;
     % disp(tvfilt);
     % tvfilt.lag_kernel = {57, 'dolph', 100};
     % tvfilt.doppler_kernel = {33, 'hamm'};
@@ -362,10 +373,14 @@ switch signal_name
         x_components{p} = x;
     end
 
-    xtfd = xtfd.set_lag_kernel(63, {'dolph', 100});
-    xtfd = xtfd.set_dopp_kernel(63, {'hamm'});    
-    % set longer IF length here for both the xTFD and TV filt. method
-    % xtfd.min_if_length = 80;
+    % xtfd = xtfd.set_lag_kernel(63, {'dolph', 100});
+    % xtfd = xtfd.set_dopp_kernel(63, {'hamm'});    
+    % xtfd = xtfd.set_lag_kernel(41, {'dolph', 100});
+    % xtfd = xtfd.set_dopp_kernel(81, {'hamm'});    
+    
+    
+    % tvfilt = tvfilt.set_lag_kernel(41, {'dolph', 100});
+    % tvfilt = tvfilt.set_dopp_kernel(81, {'hamm'});    
     
     ssst.window = chebwin(63, 100);
     vncmd.estIF = [50 * ones(1, length(x)); 80 * ones(1, length(x)); ...
@@ -375,8 +390,7 @@ switch signal_name
     tvemd.bwr = 0.1;
     vmd.alpha = 1;
     msst.hlength = 60;
-    % tvfilt.wx = 31;
-    % tvfilt.min_if_length = 80;
+
 
   otherwise
     error('what signal?');

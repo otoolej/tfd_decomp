@@ -1,13 +1,14 @@
 % Time varying filtering based EMD
-function imf = tvf_emd(x)
+function imf = tvf_emd(x, bwr)
 %input
 % x: input signal x(t)
 %output
 % imf: resulting intrinsic mode functions
+if(nargin < 2 || isempty(bwr)), bwr = 0.1; end
 
  %%%%%%%%%%% preprocessing
  
- THRESH_BWR=0.1; % inst bandwidth  threshold (stopping criterion)
+ THRESH_BWR=bwr; % inst bandwidth  threshold (stopping criterion)
  MAX_IMF=50; % max output imfs
  BSP_ORDER=26; % b-spline order
  end_flag=0;

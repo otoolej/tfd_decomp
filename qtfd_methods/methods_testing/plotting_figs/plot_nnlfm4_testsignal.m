@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 15-02-2022
 %
-% last update: Time-stamp: <2023-07-02 09:57:59 (otoolej)>
+% last update: Time-stamp: <2023-07-08 13:15:37 (otoolej)>
 %-------------------------------------------------------------------------------
 function plot_nnlfm4_testsignal(signal_type, print_)
 if(nargin < 1 || isempty(signal_type)), signal_type = 'nnlfm4'; end
@@ -27,12 +27,12 @@ scale_fig = true;
 FONT_NAME = 'helvetica';
 FONT_SIZE = 12;
 if(scale_fig)
-    FONT_SIZE = 14;
+    FONT_SIZE = 15;
 end
 
 
 
-[x, y_comps, Fs, all_params] = select_signal_withparams(signal_type, false);
+[x, y_comps, Fs, all_params] = set_signal_parameters(signal_type, false);
 
 
 %---------------------------------------------------------------------
@@ -57,6 +57,10 @@ switch signal_type
     ytl = get(gca, 'yticklabels');
     ytl{5} = 'noise';
     set(gca, 'yticklabels', ytl);
+    
+    for n = 1:length(hp)
+        hp(n).LineWidth = 1.0;
+    end
 end
 
 hax = gca;
@@ -85,8 +89,8 @@ hax.XAxis.Visible = 'off';
 set_gca_fonts(FONT_NAME, FONT_SIZE, hax);
 
 % set colours:
-llcube = cubehelix(10);
-llcube = llcube(1:8, :);
+llcube = cubehelix(7);
+llcube = llcube(1:7, :);
 for n = 2:length(hp)
     in = mod(n - 2, size(llcube, 1)) + 1;
     hp(n).Color = llcube(in, :);
@@ -109,7 +113,7 @@ set(h, 'rotation', 90);
 
 
 if(print_)
-    fname = ['pics/' signal_type '_test/' signal_type '_comps_justsignal'];
+    fname = ['pics/' signal_type '_test/' signal_type '_comps_justsignal_v3'];
     % print([fname '.svg'], '-dsvg');
     print2eps([fname '.eps']);
 end
@@ -117,9 +121,11 @@ end
 %---------------------------------------------------------------------
 % plot TFD
 %---------------------------------------------------------------------
+subplot = @(n, m, p) subtightplot(n, m, p, [0.1, 0.1]);
+
 set_figure(903);
 pp = get(gcf, 'position');
-% set(gcf, 'position', [pp(1:2) 570 200]);
+set(gcf, 'position', [pp(1:2) 570 366]);
 cc = cubehelix(256);
 cc = flipud(cc);
 colormap(cc); % , 1.5, 3, 4, 1, [0.2, 1], [0, 0.9]));
@@ -138,8 +144,8 @@ hx.Box = 'on';
 hx.XAxis.TickValues = [];
 hx.YAxis.TickValues = [];
 
-xlabel('frequency', 'fontname', FONT_NAME, 'fontsize', FONT_SIZE + 2);
-ylabel('time', 'fontname', FONT_NAME, 'fontsize', FONT_SIZE + 2);
+xlabel('frequency', 'fontname', FONT_NAME, 'fontsize', FONT_SIZE + 1);
+ylabel('time', 'fontname', FONT_NAME, 'fontsize', FONT_SIZE + 1);
 hx.Box = 'on';
 
 hx = subplot(1, 2, 2); hold all;
@@ -156,7 +162,7 @@ hx.Box = 'on';
 
 
 if(print_)
-    fname = ['pics/' signal_type '_test/' signal_type '_TFDcomponents_justsignal'];
+    fname = ['pics/' signal_type '_test/' signal_type '_TFDcomponents_justsignal_v3'];
     % print([fname '.svg'], '-dsvg');
     print2eps([fname '.eps']);
 end

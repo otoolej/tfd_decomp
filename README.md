@@ -75,9 +75,9 @@ plot_2tone_tests_compare(false);
 
 and set `time_mask = true;` and same again.
 
-## test signals
+## Test signals
 
-### bat signal
+### a) bat signal
 
 To generate the plots for bat signals, decomposing to a maximum of 5 components, do as follows:
 ```matlab
@@ -90,7 +90,7 @@ To generate the plots for bat signals, decomposing to a maximum of 5 components,
 ```
 
 
-### fractional Gaussian noise
+### b) fractional Gaussian noise
 
 ```matlab
        print_ = false;
@@ -101,7 +101,7 @@ To generate the plots for bat signals, decomposing to a maximum of 5 components,
        end
 ```
 
-### multicomponent nonlinear FM signal with noise
+### c) multicomponent nonlinear FM signal with noise
 ```matlab
 	compare_methods_generic_signal_plot('tvfilt', 'nnlfm4', false);
 	compare_methods_generic_signal_plot('xtfd', 'nnlfm4', false);

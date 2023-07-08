@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 03-09-2021
 %
-% last update: Time-stamp: <2022-04-21 15:03:11 (otoolej)>
+% last update: Time-stamp: <2023-07-06 07:45:10 (otoolej)>
 %-------------------------------------------------------------------------------
 function [x, x_components, y, y_comps] = compare_methods_testsignals(signal_name, methods_subset, dbplot)
 if(nargin < 1 || isempty(signal_name)), signal_name = 'lfm1'; end
@@ -34,7 +34,7 @@ if(nargin < 3 || isempty(dbplot)), dbplot = false; end
 %---------------------------------------------------------------------
 % 2. default parameters for all methods
 %---------------------------------------------------------------------
-[x, x_components, Fs, all_params] = select_signal_withparams(signal_name, false);
+[x, x_components, Fs, all_params] = set_signal_parameters(signal_name, false);
 
 N_components = length(x_components);
 

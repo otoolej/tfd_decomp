@@ -16,21 +16,20 @@
 % John M. O' Toole, University College Cork
 % Started: 12-11-2021
 %
-% last update: Time-stamp: <2023-07-02 09:51:23 (otoolej)>
+% last update: Time-stamp: <2023-07-08 13:57:26 (otoolej)>
 %-------------------------------------------------------------------------------
-function compare_methods_generic_signal_plot(method_str, signal_type, print_)
+function compare_methods_generic_signal_plot(method_str, signal_type, print_, increase_font)
 if(nargin < 1 || isempty(method_str)), method_str = 'vmd'; end
 if(nargin < 2 || isempty(signal_type)), signal_type = 'bat'; end
 if(nargin < 3 || isempty(print_)), print_ = false; end
-
+if(nargin < 4 || isempty(increase_font)), increase_font = false; end
 
 scale_fig = true;
 
-
 FONT_NAME = 'helvetica';
 FONT_SIZE = 14;
-if(scale_fig)
-    FONT_SIZE = 14;
+if(increase_font)
+    FONT_SIZE = 15;
 end
 
 
@@ -41,6 +40,18 @@ all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'msst', 'vmd'};
 %---------------------------------------------------------------------
 % 
 %---------------------------------------------------------------------
+switch signal_type
+  case 'bat'
+    if(length(y_comps) > 5)
+        y_comps = y_comps(1:5);
+    end
+  case 'noise'
+    if(strcmp(method_str, 'efd'))
+        y_comps = y_comps(end: -1:1);
+    end
+  otherwise
+end
+
  
 hp = plot_components(x, y_comps, 1, 900, length(y_comps), false);
 % if(length(hp) > 20)
@@ -62,6 +73,21 @@ end
 switch signal_type
   case 'bat'
     set(gcf, 'position', [pp(1:2) 570  320]);
+    for n = 1:length(hp)
+        hp(n).LineWidth = 0.8;
+    end
+    
+  case 'nnlfm4'
+    set(gcf, 'position', [pp(1:2) 570  320]);
+    for n = 1:length(hp)
+        hp(n).LineWidth = 0.8;
+    end
+    
+    
+  case 'noise'
+    for n = 1:length(hp)
+        hp(n).LineWidth = 1;
+    end
 end
 
 
@@ -82,8 +108,24 @@ hax.XAxis.Visible = 'off';
 set_gca_fonts(FONT_NAME, FONT_SIZE, hax);
 
 % set colours:
-llcube = cubehelix(10);
-llcube = llcube(1:8, :);
+switch signal_type
+  case 'bat'
+    if(strcmp(signal_type, 'xtfd') || strcmp(signal_type, 'tvfilt'))
+        llcube = cubehelix(6);
+        llcube = llcube(1:6, :);
+    else
+        llcube = cubehelix(10);
+        llcube = llcube(1:10, :);
+    end
+        
+  case 'nnlfm4'
+    llcube = cubehelix(7);
+    llcube = llcube(1:7, :);
+    
+  otherwise
+    llcube = cubehelix(10);
+    llcube = llcube(1:8, :);
+end
 % lcube = cubehelix(8, 2.5, -1.5, 3.6, 0.7, [0.2, 1], [0.2, 0.6]);
 % lcube = cubehelix(16, 1.5, 3, 4, 1, [0.2, 1], [0, 0.9]);
 % lcube = (lcube(2:end - 1, :));
@@ -102,8 +144,22 @@ ys = ylim;
 yset = (ys(2) - ys(1)) / 2;
 % h = text(-42.78, mean(ys) - yset * 0.2, 'components', 'horizontalalignment', 'right', ...
 %          'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
-h = text(-25, mean(ys) - yset * 0.00, 'components', 'horizontalalignment', 'right', ...
+switch signal_type
+  case 'noise'
+    xshift = -15;
+    ymult = 0.0;
+  case 'nnlfm4'
+    xshift = -25;
+    ymult = 0.17;
+    
+  otherwise
+    xshift = -40;
+    ymult = 0.1;
+end
+h = text(xshift, mean(ys) - yset * ymult, 'components', ...
+         'horizontalalignment', 'right', ...
          'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
+
 
 set(h, 'rotation', 90);
 
@@ -111,23 +167,32 @@ set(h, 'rotation', 90);
 if(print_)
     fname = ['pics/' signal_type '_test/' signal_type '_comps_' method_str];
     % print([fname '_v2.svg'], '-dsvg');
-    print2eps([fname '_v2.eps']);
+    print2eps([fname '_v3.eps']);
 end
 
 
 %---------------------------------------------------------------------
 % error plot
 %---------------------------------------------------------------------
-
-subplot = @(n, m, p) subtightplot(n, m, p, [0.1, 0.1], [0.21, 0.05], [0.1, 0.01]);
+subplot = @(n, m, p) subtightplot(n, m, p, [0.1, 0.1], [0.21, 0.05], [0.1, 0.05]);
 
 set_figure(901);
 pp = get(gcf, 'position');
 set(gcf, 'position', [pp(1:2) 570 296]);
 
+switch signal_type
+  case 'noise'
+    lwidth = 1.5;
+    msize = 3;
+    FONT_SIZE = 15;
+  otherwise
+    lwidth = 1.0;
+    msize = 2.5;
+end
+
 hx(1) = subplot(2, 1, 1); hold all;
-plot(x, '-o', 'markersize', 2, 'color', lblue);
-plot(y, '-+', 'markersize', 2, 'color', lred);
+plot(x, '-o', 'markersize', msize, 'color', lblue, 'linewidth', lwidth);
+plot(y, '-+', 'markersize', msize, 'color', lred, 'linewidth', lwidth);
 ys = ylim();
 hg = legend({'signal', 'estimate'}, 'location', 'southeast', ...
             'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
@@ -143,6 +208,8 @@ switch signal_type
     ylim([-0.2 0.2]);
   case 'nnlfm4'
     ylim([-3.5, 3.5]);
+  case 'noise'
+    ylim([-3, 3]);
 end
 ys = ylim;
 
@@ -164,7 +231,7 @@ switch signal_type
     set(hx, 'ytick', [-3.5 0 3.5]);
     
   otherwise
-    plot(x - y, '-', 'color', lblue);
+    plot(x - y, '-', 'color', lblue, 'linewidth', lwidth);
 
     legend({'residual'}, 'location', 'southeast', ...
            'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
@@ -174,15 +241,22 @@ hx(2).Clipping = 'off';
 ylim(ys);
 xlim([0 length(x)]);
 
-set_gca_fonts(FONT_NAME, FONT_SIZE - 2, hx);
+
+% switch signal_type
+%   case 'noise'
+%     ylim([-4, 4]);
+% end
+
+
+set_gca_fonts(FONT_NAME, FONT_SIZE, hx);
 
 xlabel('samples', 'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
 
 
 if(print_)
     fname = ['pics/' signal_type '_test/' signal_type '_terror_' method_str];
-    % print([fname '_v2.svg'], '-dsvg');
-    print2eps([fname '_v2.eps']);
+    % print([fname '_v3.svg'], '-dsvg');
+    print2eps([fname '_v3.eps']);
 end
 
 
@@ -193,7 +267,7 @@ switch signal_type
   case 'bat'
 
     ggap = 0.03;
-    subplot = @(n, m, p) subtightplot(n, m, p, [0.02, 0.02], [ggap, ggap], [ggap + 0.02, ggap + 0.02]);
+    subplot = @(n, m, p) subtightplot(n, m, p, [0.02, 0.02], [ggap, ggap], [ggap + 0.04, ggap + 0.02]);
 
     N = length(x);
     L = length(y_comps);
@@ -231,8 +305,8 @@ switch signal_type
 
     if(print_)
         fname = ['pics/' signal_type '_test/' signal_type '_TFDcomponents_' method_str];
-        print([fname '_v2.svg'], '-dsvg');
-        print2eps([fname '_v2.eps']);
+        % print([fname '_v3.svg'], '-dsvg');
+        print2eps([fname '_v3.eps']);
     end
     
 

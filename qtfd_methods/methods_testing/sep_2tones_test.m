@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 14-09-2021
 %
-% last update: Time-stamp: <2023-07-02 08:54:18 (otoolej)>
+% last update: Time-stamp: <2023-07-07 14:27:35 (otoolej)>
 %-------------------------------------------------------------------------------
 function re = sep_2tones_test(method, time_mask, save_, db_plot, L_grid)
 if(nargin < 1 || isempty(method)), method = 'xTFD'; end
@@ -59,14 +59,18 @@ f_ratio = f1 ./ f0;
 % parameters for the methods
 %---------------------------------------------------------------------
 tvfilt = decomp_params(N, 'tvfilt');
-% tvfilt.doppler_kernel = {31, 'hamm'};
-tvfilt.lag_kernel = {67, 'dolph', 100};
+xtfd = decomp_params(N, 'xtfd');
+
+l_lag = make_odd(ceil(sqrt(N) * 2));
+l_dopp = make_odd(ceil(sqrt(N)));
+tvfilt = tvfilt.set_lag_kernel(l_lag, {'dolph', 100});
+tvfilt = tvfilt.set_dopp_kernel(l_dopp, {'hamm'});
 tvfilt.qtfd_max_thres = [];
 
-
-xtfd = decomp_params(N, 'xtfd');
-xtfd.lag_kernel = {67, 'dolph', 100};
-xtfd.Nfreq = N * 32;
+l_dopp = make_odd(N / 2);
+xtfd = xtfd.set_lag_kernel(l_lag, {'dolph', 100});
+xtfd = xtfd.set_dopp_kernel(l_dopp, {'hamm'});
+xtfd.Nfreq = N * 8;
 
 
 if(~time_mask)
@@ -189,8 +193,8 @@ if(save_)
     end
 
     time_now = now;
-    save(['./data/tones_test_' method tstr '_v2.mat'], 're', 'amp_ratio', 'f_ratio', ...
-        'time_now');
+    save(['./data/plots/tones_test_' method tstr '_v2.mat'], 're', 'amp_ratio', 'f_ratio', ...
+         'time_now');
 end
 
 

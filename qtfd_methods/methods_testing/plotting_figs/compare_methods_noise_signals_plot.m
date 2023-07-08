@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-11-2021
 %
-% last update: Time-stamp: <2022-04-25 12:29:01 (otoolej)>
+% last update: Time-stamp: <2023-07-07 14:25:23 (otoolej)>
 %-------------------------------------------------------------------------------
 function compare_methods_noise_signals_plot(method_str, print_)
 if(nargin < 1 || isempty(method_str)), method_str = 'vmd'; end
@@ -80,7 +80,7 @@ hp(1).Color = lblue;
 
 if(print_)
     % print(['pics/noise_test/noise_ffgn_test_comps_' method_str '_v2.svg'], '-dsvg');
-    print2eps(['pics/noise_test/noise_ffgn_test_comps_' method_str '_v2.eps']);
+    print2eps(['pics/noise_test/noise_ffgn_test_comps_' method_str '_v3.eps']);
 end
 
 
@@ -128,5 +128,5 @@ set_gca_fonts(FONT_NAME, FONT_SIZE, hx);
 
 if(print_)
     % print(['pics/noise_test/noise_ffgn_test_error_' method_str '_v2.svg'], '-dsvg');
-    print2eps(['pics/noise_test/noise_ffgn_test_error_' method_str '_v2.eps']);
+    print2eps(['pics/noise_test/noise_ffgn_test_error_' method_str '_v3.eps']);
 end

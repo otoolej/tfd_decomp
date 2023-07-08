@@ -16,7 +16,7 @@
       sep_2tones_test('tvfilt', false, true, false, 50);            
 
       % and plot all:
-      plot_2tone_tests_compare(false);
+      plot_2tone_tests_compare(false, false);
     #+END_SRC
 
 
@@ -34,6 +34,18 @@
       sep_2tones_test('tvfilt', tmask, true, false, 50);            
       
       % and plot all:
-      plot_2tone_tests_compare(false);
+      plot_2tone_tests_compare(true, false);
     #+END_SRC
    
+* bat signal
+
+  #+BEGIN_SRC matlab
+  signal_type = 'bat'
+
+  print_ = false;
+  all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'msst', 'vmd'};
+     
+  for n = 1:length(all_methods)
+      compare_methods_generic_signal_plot(all_methods{n}, signal_type, print_);
+  end
+  #+END_SRC

@@ -28,7 +28,7 @@
 % John M. O' Toole, University College Cork
 % Started: 27-08-2021
 %
-% last update: Time-stamp: <2022-04-20 16:53:49 (otoolej)>
+% last update: Time-stamp: <2023-07-07 10:57:15 (otoolej)>
 %-------------------------------------------------------------------------------
 function [if_law, f_scale, t_scale, if_tracks, if_energy] = ...
     find_tracks(tfd, Fs, N, params, freq_limits)
@@ -49,9 +49,7 @@ f_scale = (1 / Nfreq) * (Fs / 2);
 
 % delta_freq_samples = floor( (params.delta_search_freq / f_scale) * t_scale );
 % min_component_length = floor( params.min_if_length / t_scale );
-delta_freq_samples = floor(params.delta_search_freq * (Nfreq / Ntime));
-
-% dispVars(params.delta_search_freq, delta_freq_samples, params.min_if_length, Nfreq);
+delta_freq_samples = floor(params.delta_freq_samples * (Nfreq / Ntime));
 
 
 % if are limiting search to specific frequency band:

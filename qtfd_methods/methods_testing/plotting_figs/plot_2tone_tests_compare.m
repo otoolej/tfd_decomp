@@ -1,5 +1,5 @@
 %-------------------------------------------------------------------------------
-% plot_2tone_tests_compare: 
+% plot_2tone_tests_compare: load results from .mat files and plot in 1 figure
 %
 % Syntax: [] = plot_2tone_tests_compare()
 %
@@ -16,25 +16,20 @@
 % John M. O' Toole, University College Cork
 % Started: 17-09-2021
 %
-% last update: Time-stamp: <2022-04-25 09:54:14 (otoolej)>
+% last update: Time-stamp: <2023-07-06 07:30:26 (otoolej)>
 %-------------------------------------------------------------------------------
-function plot_2tone_tests_compare(time_mask, tukey_smooth, print_)
-if(nargin < 1 || isempty(time_mask)), time_mask = false; end
-if(nargin < 2 || isempty(tukey_smooth)), tukey_smooth = true; end
-if(nargin < 3 || isempty(print_)), print_ = false; end
+function plot_2tone_tests_compare(time_mask_tukey, print_)
+if(nargin < 1 || isempty(time_mask_tukey)), time_mask_tukey = true; end
+if(nargin < 2 || isempty(print_)), print_ = false; end
 
 
 
 methods = {'vmd', 'tvemd', 'ssst', 'xtfd', 'tvfilt'};
 methods = {'tvemd', 'vmd', 'efd', 'ssst', 'xtfd', 'tvfilt'};
-% methods = {'tvemd', 'vmd', 'efd', 'ssst', 'tvfilt'};
-% methods = {'efd', 'ssst', 'tvemd', 'vmd'};
-
-if(time_mask)
-    tstr = '_septime_';
-    if(tukey_smooth)
-        tstr = '_septime_tukey';            
-    end
+    
+if(time_mask_tukey)
+    tstr = '_septime_tukey';            
+end
 else
     tstr = '';
 end
@@ -101,7 +96,7 @@ for n = 1:length(methods)
         %     d = load(['./data/tones_test_' methods{n} tstr '_v3.mat']);
         %     dispVars(methods{n}, 'here');
         % else
-        d = load(['./data/tones_test_' methods{n} tstr '.mat']);
+        d = load(['./data/plots/tones_test_' methods{n} tstr '.mat']);
             % end
             fprintf(col_str('loading parameters from file saved on %s\n', 1), ...
                     datestr(d.time_now));
@@ -161,7 +156,7 @@ end
 
 if(print_)
     % print(['pics/two_tone_test_6methods_' tstr '_v2.svg'], '-dsvg');
-    print2eps(['pics/two_tone_test_6methods_' tstr '_v4.eps']);
+    print2eps(['pics/two_tone_test_6methods_' tstr '_v5.eps']);
 end
 
 
