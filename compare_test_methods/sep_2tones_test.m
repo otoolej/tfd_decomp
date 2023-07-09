@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 14-09-2021
 %
-% last update: Time-stamp: <2023-07-07 14:27:35 (otoolej)>
+% last update: Time-stamp: <2023-07-09 03:15:41 (otoolej)>
 %-------------------------------------------------------------------------------
 function re = sep_2tones_test(method, time_mask, save_, db_plot, L_grid)
 if(nargin < 1 || isempty(method)), method = 'xTFD'; end

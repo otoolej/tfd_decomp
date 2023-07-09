@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 03-09-2021
 %
-% last update: Time-stamp: <2023-07-06 07:45:10 (otoolej)>
+% last update: Time-stamp: <2023-07-09 13:24:01 (otoolej)>
 %-------------------------------------------------------------------------------
 function [x, x_components, y, y_comps] = compare_methods_testsignals(signal_name, methods_subset, dbplot)
 if(nargin < 1 || isempty(signal_name)), signal_name = 'lfm1'; end
@@ -38,6 +38,9 @@ if(nargin < 3 || isempty(dbplot)), dbplot = false; end
 
 N_components = length(x_components);
 
+%  for testing how many signal components with <90% of signal:
+N_components = 100;
+
 % need to keep original sampling rates:
 UPSAMPLE = false;
 if(UPSAMPLE)
@@ -50,7 +53,7 @@ end
 %---------------------------------------------------------------------
 % 2. compare methods
 %---------------------------------------------------------------------
-db_plot = true;
+db_plot = false;
 mse_all = [];
 for n = 1:length(methods_subset)
     % set_figure(8 + n);
