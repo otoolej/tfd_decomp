@@ -17,15 +17,23 @@
 % John M. O' Toole, University College Cork
 % Started: 17-09-2021
 %
-% last update: Time-stamp: <2023-07-02 08:42:16 (otoolej)>
+% last update: Time-stamp: <2023-07-19 19:26:46 (otoolej)>
 %-------------------------------------------------------------------------------
-function [y, y_comps] = decomp_all_methods(x, Fs, method, N_components, params, db_plot)
+function [y, y_comps, comp_time] = decomp_all_methods(x, Fs, method, N_components, params, db_plot, timeit)
 if(nargin < 4 || isempty(N_components)), N_components = 1; end
 if(nargin < 5 || isempty(params)), params = []; end
 if(nargin < 6 || isempty(db_plot)), db_plot = false; end
+if(nargin < 7 || isempty(timeit)), timeit = true; end
 
 
 x = x(:).';
+
+if(timeit)
+    start_time = tic();
+else
+    comp_time = NaN;
+end
+
 
 switch upper(method)
   case 'EMD'
@@ -176,6 +184,11 @@ switch upper(method)
     
   otherwise
     error('which method?');
+end
+
+
+if(timeit)
+    comp_time = toc(start_time);
 end
 
 

@@ -40,7 +40,7 @@ N = length(signal1);
 %---------------------------------------------------------------------
 qtfd = qtfd_sep_kern(signal1, params.doppler_kernel, params.lag_kernel, N, N);
 
-db_plot = true;
+db_plot = false;
 if(db_plot)
     set_figure(2001); 
     vtfd(qtfd);

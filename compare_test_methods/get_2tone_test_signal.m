@@ -48,13 +48,13 @@ end
 fprintf('|k=%d |m=%d | f_ratio=%g | k0=%g | amp_ratio=%g |\n', ...
         k, m, f_ratio(k), k0(k), amp_ratio(m));
 
-
 x = x_comp{1} + x_comp{2};
 
 
-set_figure(98); 
-plot(x);
-plot(x_comp{1} - 5);
-plot(x_comp{2} - 10);
-
-
+dbplot = false;
+if(dbplot)
+    set_figure(98); 
+    plot(x);
+    plot(x_comp{1} - 5);
+    plot(x_comp{2} - 10);
+end

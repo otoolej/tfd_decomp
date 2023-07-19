@@ -28,7 +28,7 @@
 % John M. O' Toole, University College Cork
 % Started: 14-04-2022
 %
-% last update: Time-stamp: <2023-07-03 03:26:34 (otoolej)>
+% last update: Time-stamp: <2023-07-19 19:25:45 (otoolej)>
 %-------------------------------------------------------------------------------
 function [if_tracks, tfd_mask] = if_tracks_MCQmethod(qtfd, N, Fs, bw, min_if_length, max_peaks, ...
                                                   qtfd_max_thres, freq_limits)
@@ -99,4 +99,10 @@ for n = 1:length(if_tracks)
 end
 
 
-set_figure(2002); mesh(tfd_mask);
+dbplot = false;
+if(dbplot)
+    set_figure(2002); 
+    mesh(tfd_mask);
+end
+
+    

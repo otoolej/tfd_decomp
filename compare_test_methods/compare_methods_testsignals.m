@@ -16,9 +16,9 @@
 % John M. O' Toole, University College Cork
 % Started: 03-09-2021
 %
-% last update: Time-stamp: <2023-07-09 13:24:01 (otoolej)>
+% last update: Time-stamp: <2023-07-19 19:23:58 (otoolej)>
 %-------------------------------------------------------------------------------
-function [x, x_components, y, y_comps] = compare_methods_testsignals(signal_name, methods_subset, dbplot)
+function [x, x_components, y, y_comps, comp_time] = compare_methods_testsignals(signal_name, methods_subset, dbplot)
 if(nargin < 1 || isempty(signal_name)), signal_name = 'lfm1'; end
 if(nargin < 2 || isempty(methods_subset)), methods_subset = {'xTFD', 'WSST'}; end
 if(nargin < 3 || isempty(dbplot)), dbplot = false; end
@@ -81,7 +81,8 @@ for n = 1:length(methods_subset)
     % dispVars(methods_subset{n});
     % disp(p_st.params);
 
-    [y, y_comps] = decomp_all_methods(x, Fs, methods_subset{n}, N_components, params, dbplot);
+    [y, y_comps, comp_time] = decomp_all_methods(...
+        x, Fs, methods_subset{n}, N_components, params, dbplot);
 
     y = y(:);
     if(db_plot && ~isempty(y))

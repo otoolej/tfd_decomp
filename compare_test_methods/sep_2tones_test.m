@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 14-09-2021
 %
-% last update: Time-stamp: <2023-07-09 03:15:41 (otoolej)>
+% last update: Time-stamp: <2023-07-19 19:23:26 (otoolej)>
 %-------------------------------------------------------------------------------
 function re = sep_2tones_test(method, time_mask, save_, db_plot, L_grid)
 if(nargin < 1 || isempty(method)), method = 'xTFD'; end
@@ -165,24 +165,26 @@ end
 % set_figure(2000); 
 % mesh(f_ratio, amp_ratio, re);
 
-set_figure(2001);
-rex = re;
-rex(rex > 1) = 1;
-imagesc(log10(amp_ratio), f_ratio, rex);
-axis('xy');
-axis('tight');
-xlabel('amplitude ratio (log10)');
-ylabel('frequency ratio');
+dbplot = false;
+if(dbplot)
+    set_figure(2001);
+    rex = re;
+    rex(rex > 1) = 1;
+    imagesc(log10(amp_ratio), f_ratio, rex);
+    axis('xy');
+    axis('tight');
+    xlabel('amplitude ratio (log10)');
+    ylabel('frequency ratio');
 
-set_figure(2002);
-rex = re;
-rex(rex > 0.5) = 0.5;
-imagesc(log10(amp_ratio), f_ratio, rex);
-axis('xy');
-axis('tight');
-xlabel('amplitude ratio (log10)');
-ylabel('frequency ratio');
-
+    set_figure(2002);
+    rex = re;
+    rex(rex > 0.5) = 0.5;
+    imagesc(log10(amp_ratio), f_ratio, rex);
+    axis('xy');
+    axis('tight');
+    xlabel('amplitude ratio (log10)');
+    ylabel('frequency ratio');
+end
 
 
 if(save_)

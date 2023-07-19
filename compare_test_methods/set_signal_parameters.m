@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 24-09-2021
 %
-% last update: Time-stamp: <2023-07-09 13:48:14 (otoolej)>
+% last update: Time-stamp: <2023-07-18 18:19:14 (otoolej)>
 %-------------------------------------------------------------------------------
 function [x, x_components, Fs, all_params] = set_signal_parameters(signal_name, db_plot)
 if(nargin < 2 || isempty(db_plot)), db_plot = false; end
@@ -71,6 +71,21 @@ switch signal_name
 
     tvemd.bwr = 0.05;
     
+    tvfilt = decomp_params(N, 'tvfilt');
+    xtfd = decomp_params(N, 'xtfd');
+
+    l_lag = make_odd(ceil(sqrt(N) * 2));
+    l_dopp = make_odd(ceil(sqrt(N)));
+    tvfilt = tvfilt.set_lag_kernel(l_lag, {'dolph', 100});
+    tvfilt = tvfilt.set_dopp_kernel(l_dopp, {'hamm'});
+    tvfilt.qtfd_max_thres = [];
+
+    l_dopp = make_odd(N / 2);
+    xtfd = xtfd.set_lag_kernel(l_lag, {'dolph', 100});
+    xtfd = xtfd.set_dopp_kernel(l_dopp, {'hamm'});
+    xtfd.Nfreq = N * 8;
+    
+    
   case {'2tone2'}    
     [x, x_components] = get_2tone_test_signal(true, 25, 10); 
     
@@ -89,6 +104,21 @@ switch signal_name
     tvemd.bwr = 0.05;
     
     ssst.window = chebwin(33, 100);
+    
+    tvfilt = decomp_params(N, 'tvfilt');
+    xtfd = decomp_params(N, 'xtfd');
+
+    l_lag = make_odd(ceil(sqrt(N) * 2));
+    l_dopp = make_odd(ceil(sqrt(N)));
+    tvfilt = tvfilt.set_lag_kernel(l_lag, {'dolph', 100});
+    tvfilt = tvfilt.set_dopp_kernel(l_dopp, {'hamm'});
+    tvfilt.qtfd_max_thres = [];
+
+    l_dopp = make_odd(N / 2);
+    xtfd = xtfd.set_lag_kernel(l_lag, {'dolph', 100});
+    xtfd = xtfd.set_dopp_kernel(l_dopp, {'hamm'});
+    xtfd.Nfreq = N * 8;
+    
 
   case {'nnlfm4'}
     % same as previous but with noise

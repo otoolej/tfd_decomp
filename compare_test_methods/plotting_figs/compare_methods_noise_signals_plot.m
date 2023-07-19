@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-11-2021
 %
-% last update: Time-stamp: <2023-07-07 14:25:23 (otoolej)>
+% last update: Time-stamp: <2023-07-19 19:20:00 (otoolej)>
 %-------------------------------------------------------------------------------
 function compare_methods_noise_signals_plot(method_str, print_)
 if(nargin < 1 || isempty(method_str)), method_str = 'vmd'; end
@@ -30,7 +30,7 @@ FONT_SIZE = 13;
 all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'msst', 'vmd'};
 
 % [x, x_components, y, y_comps] = compare_methods_testsignals('noise', {'tvfilt'});
-[x, x_components, y, y_comps] = compare_methods_testsignals('noise', {method_str});
+[x, x_components, y, y_comps, ~] = compare_methods_testsignals('noise', {method_str});
 
 %---------------------------------------------------------------------
 % 
