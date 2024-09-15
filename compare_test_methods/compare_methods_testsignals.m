@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 03-09-2021
 %
-% last update: Time-stamp: <2023-07-19 19:23:58 (otoolej)>
+% last update: Time-stamp: <2024-09-15 20:51:30 (otoolej)>
 %-------------------------------------------------------------------------------
 function [x, x_components, y, y_comps, comp_time] = compare_methods_testsignals(signal_name, methods_subset, dbplot)
 if(nargin < 1 || isempty(signal_name)), signal_name = 'lfm1'; end
@@ -26,13 +26,7 @@ if(nargin < 3 || isempty(dbplot)), dbplot = false; end
 
 
 %---------------------------------------------------------------------
-% 1. load signals
-%---------------------------------------------------------------------
-[x_nlfm, x_nlfm_comps, x_lfm_comps] = nlfm_test_signals(false);
-
-
-%---------------------------------------------------------------------
-% 2. default parameters for all methods
+% 1. load the the signals and default parameters for all methods
 %---------------------------------------------------------------------
 [x, x_components, Fs, all_params] = set_signal_parameters(signal_name, false);
 
@@ -78,9 +72,10 @@ for n = 1:length(methods_subset)
         params = p_st.params;
     end
     
-    % dispVars(methods_subset{n});
+    dispVars(methods_subset{n});
+    dispVars(N_components);
     % disp(p_st.params);
-
+    
     [y, y_comps, comp_time] = decomp_all_methods(...
         x, Fs, methods_subset{n}, N_components, params, dbplot);
 
@@ -89,33 +84,53 @@ for n = 1:length(methods_subset)
         err_plot(x, y_comps, y, 2000 + n * 100, methods_subset{n});
     end
 
-    
-    mse_tmp = [];
-    rerr_tmp = [];
-    rerr_tmp = [];
-    for p = 1:length(y_comps)
-        yc = y_comps{p};
-        yc(isnan(yc)) = 0;
-
-        r = zeros(1, length(x_components));
-        for q = 1:length(x_components)
-            r(q) = corr(x_components{q}(:), yc(:));
-        end
-        [~, isort] = max(r);
-
-        diff_l2 = sqrt(sum(abs(x_components{isort(1)}(:)' - yc(:).') .^ 2));
-        comp_l2 = sqrt(sum(abs(x_components{isort(1)}) .^ 2));
-        rerr_tmp = [rerr_tmp (diff_l2 / comp_l2)];                
-        rr = corrcoef(x_components{isort(1)}(:), yc(:));
-        mse_tmp = [mse_tmp rr(1, 2)];
-
+    switch signal_name
+      case {'bat', 'noise', 'white-noise'}
+        re_all{n} = sqrt(sum(abs(x - y) .^ 2)) / sqrt(sum(abs(x) .^ 2));
+        snr_all{n} = 10 * log10(mean(1 ./ re_all{n}));
+        r_tmp = corrcoef(x, y);
+        mse_all{n} = r_tmp(1, 2);
         
-    end
-    % dispVars(mse_tmp);
-    mse_all{n} = mean(mse_tmp);
-    re_all{n} = mean(rerr_tmp);
-    snr_all{n} = 10 * log10(mean(1 ./ rerr_tmp));
+      otherwise
 
+        mse_tmp = [];
+        rerr_tmp = [];
+        rerr_tmp = [];
+        if(strcmp(signal_name, 'nnlfm4'))
+            l_end = 3;
+        else
+            l_end = length(y_comps);
+        end
+        for p = 1:l_end
+            yc = y_comps{p};
+            yc(isnan(yc)) = 0;
+
+            r = zeros(1, length(x_components));
+            for q = 1:length(x_components)
+                r(q) = corr(x_components{q}(:), yc(:));
+            end
+            [~, isort] = max(r);
+
+            diff_l2 = sqrt(sum(abs(x_components{isort(1)}(:)' - yc(:).') .^ 2));
+            comp_l2 = sqrt(sum(abs(x_components{isort(1)}) .^ 2));
+            rerr_tmp = [rerr_tmp (diff_l2 / comp_l2)];                
+            rr = corrcoef(x_components{isort(1)}(:), yc(:));
+            if(var(yc) == 0)
+                rr(1, 2) = 0;
+            end
+            mse_tmp = [mse_tmp rr(1, 2)];
+            dispVars(mse_tmp);
+            % set_figure(30); 
+            % plot(x_components{isort(1)});            
+            % plot(yc);
+            % input('any key..')
+        end
+        % dispVars(mse_tmp);
+        mse_all{n} = mean(mse_tmp);
+        re_all{n} = mean(rerr_tmp);
+        snr_all{n} = 10 * log10(mean(1 ./ rerr_tmp));
+    end
+    
     % restore original signal
     if(UPSAMPLE)
         switch methods_subset{n}
@@ -128,7 +143,7 @@ end
 
 fprintf('signal %s:\n', signal_name);
 print_table([mse_all{:}; re_all{:}; snr_all{:}]', {'CORR', 'RE', 'SNR'}, ...
-            methods_subset, [], [], [4]);
+            methods_subset, [], [], [3]);
 % print_table(mse_all', {'MSE'}, methods_subset);
 
 

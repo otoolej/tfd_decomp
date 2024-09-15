@@ -17,15 +17,15 @@
 % John M. O' Toole, University College Cork
 % Started: 09-07-2023
 %
-% last update: Time-stamp: <2023-07-19 19:18:38 (otoolej)>
+% last update: Time-stamp: <2024-09-08 16:01:47 (otoolej)>
 %-------------------------------------------------------------------------------
 function [num_comps, all_methods, signal_types] = num_components_decomp()
 
     
 all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'vmd', 'vncmd'};
-signal_types = {'2tone1', '2tone2', 'nnlfm4', 'noise', 'bat'};
-% signal_types = {'2tone2'};
-% all_methods = {'vncmd'};
+signal_types = {'2tone1', '2tone2', 'nnlfm4', 'white-noise','noise', 'bat'};
+signal_types = {'2tone1'};
+all_methods = {'efd'};
 
 num_comps = zeros(length(signal_types), length(all_methods));
 corr_x = zeros(length(signal_types), length(all_methods));
@@ -34,6 +34,7 @@ for p = 1:length(signal_types)
     for n = 1:length(all_methods)
         [x, x_components, y, y_comps, ~] = compare_methods_testsignals(...
             signal_types{p}, all_methods(n), false);
+        dispVars(size(y_comps));
         
         x_eng = sum(abs(x) .^ 2);
         q = 1;
@@ -68,7 +69,7 @@ for p = 1:length(signal_types)
 end
 
 print_table(num_comps, all_methods, signal_types, [6], [], 0);
-print_table(corr_x, all_methods, signal_types, [6], [], 3);
+print_table(corr_x, all_methods, signal_types, [6], [], 2);
 
 
 function y = sum_components(y_comps)

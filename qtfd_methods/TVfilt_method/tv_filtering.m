@@ -41,7 +41,7 @@ end
 alpha = (M-1)/2; 
 n = 0:M-1;
 decomp1 = zeros(N_components, N); %HDF = zeros(N,N/2); %HDF = tfp;
-disp('Decomposing Signal'); aa_old = 11;
+disp(N_components);
 
 for jj = 1:N_components
     cx = el1{idx(jj)}; % take component defined by IF

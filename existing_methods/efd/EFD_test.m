@@ -1,5 +1,4 @@
-% Author: Wei Zhou
-% Institution: Department of Mechanical and Materials Engineering, 
+% Author: Wei % Institution: Department of Mechanical and Materials Engineering, 
 % University of Cincinnati, Cincinnati, OH 45221, USA
 % Year: 2021
 % Version: 1.0

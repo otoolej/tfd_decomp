@@ -54,7 +54,7 @@ dispVars(params.method);
 % generate the TFD
 [qtfd, g2] = qtfd_sep_kern(x, params.doppler_kernel, params.lag_kernel, N, params.Nfreq);
 % scale
-[qtfd, scale_factor] = scale_tfd(qtfd, g2, N);
+qtfd = scale_tfd(qtfd, g2, N);
 
 
 if(db_plot)
@@ -67,9 +67,12 @@ end
 % 2. estimate tracks (from peaks) and pick components in TF domain
 %---------------------------------------------------------------------
 [if_tracks, ~, ~] = find_tracks(qtfd, Fs, N, params, tfd_limits_freq);
+fprintf('n-decomp: %d\n', length(if_tracks));
+
 
 % limit number of components:
 if_tracks = if_tracks(1:min(N_components, length(if_tracks)));
+
 
 if(isempty(if_tracks))
     if(params.db_warn)

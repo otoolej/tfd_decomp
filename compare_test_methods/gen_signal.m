@@ -98,7 +98,6 @@ DB=0;
 DBplot=0;
 DBtest=0;
 
-
 % Actually, don't want to create new figures:
 % $$$ if(DBplot)
 % $$$     openfigs=findobj('Type','figure');

@@ -38,7 +38,8 @@ N = length(signal1);
 %---------------------------------------------------------------------
 % generate separable-kernel TFD:
 %---------------------------------------------------------------------
-qtfd = qtfd_sep_kern(signal1, params.doppler_kernel, params.lag_kernel, N, N);
+[qtfd, g2] = qtfd_sep_kern(signal1, params.doppler_kernel, params.lag_kernel, N, N);
+qtfd = scale_tfd(qtfd, g2, N);
 
 db_plot = false;
 if(db_plot)
@@ -46,7 +47,6 @@ if(db_plot)
     vtfd(qtfd);
     axis('tight');
 end
-
 
 %---------------------------------------------------------------------
 % extract IF components from TFD
