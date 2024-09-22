@@ -28,13 +28,6 @@ if(nargin < 4 || isempty(db_plot)), db_plot = false; end
 N = length(signal1);
 
 
-
-%---------------------------------------------------------------------
-% zero pad at the end:
-%---------------------------------------------------------------------
-signal1 = [signal1 zeros(1, params.L_filt + 1)];
-N = length(signal1);
-
 %---------------------------------------------------------------------
 % generate separable-kernel TFD:
 %---------------------------------------------------------------------
@@ -51,17 +44,17 @@ end
 %---------------------------------------------------------------------
 % extract IF components from TFD
 %---------------------------------------------------------------------
-[el1, ei1] = if_tracks_MCQmethod(qtfd, N, 1, ...
-                                 params.delta_freq_samples, ...
-                                 params.min_if_length, ...
-                                 params.max_no_peaks, ...
-                                 params.qtfd_max_thres);
+[if_tracks, tfd_mask] = if_tracks_MCQmethod(qtfd, N, params.L_filt + 1, 1, ...
+                                            params.delta_freq_samples, ...
+                                            params.min_if_length, ...
+                                            params.max_no_peaks, ...
+                                            params.qtfd_max_thres);
 
 
 %---------------------------------------------------------------------
 % do the TV filtering
 %---------------------------------------------------------------------
-decomp = tv_filtering(el1, ei1, signal1, qtfd', params.L_filt, 'lossless', N_components);
+decomp = tv_filtering(if_tracks, tfd_mask, signal1, params.L_filt, 'lossless', N_components);
 
 
 % remove zero-padding

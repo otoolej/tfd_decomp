@@ -17,7 +17,7 @@
 % John M. O' Toole, University College Cork
 % Started: 17-09-2021
 %
-% last update: Time-stamp: <2023-07-19 19:26:46 (otoolej)>
+% last update: Time-stamp: <2024-09-21 22:45:19 (otoolej)>
 %-------------------------------------------------------------------------------
 function [y, y_comps, comp_time] = decomp_all_methods(x, Fs, method, N_components, params, db_plot, timeit)
 if(nargin < 4 || isempty(N_components)), N_components = 1; end
@@ -75,6 +75,7 @@ switch upper(method)
     % time-varying filtering
     %---------------------------------------------------------------------
     [y, y_comps] = tfd_decomposition(x, 'tvfilt', N_components, params, db_plot);
+
 
   case {'WSST'}
     %---------------------------------------------------------------------
@@ -134,7 +135,6 @@ switch upper(method)
 
     y_comps = num2cell(Ts1_6_sig, 2);
     y = nansum(Ts1_6_sig, 1);    
-
 
 
 

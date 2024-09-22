@@ -67,7 +67,7 @@ end
 % 2. estimate tracks (from peaks) and pick components in TF domain
 %---------------------------------------------------------------------
 [if_tracks, ~, ~] = find_tracks(qtfd, Fs, N, params, tfd_limits_freq);
-fprintf('n-decomp: %d\n', length(if_tracks));
+% fprintf('n-decomp: %d\n', length(if_tracks));
 
 
 % limit number of components:

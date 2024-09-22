@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 15-02-2022
 %
-% last update: Time-stamp: <2023-07-09 02:37:16 (otoolej)>
+% last update: Time-stamp: <2024-09-22 22:52:35 (otoolej)>
 %-------------------------------------------------------------------------------
 function plot_nnlfm4_testsignal(signal_type, print_)
 if(nargin < 1 || isempty(signal_type)), signal_type = 'nnlfm4'; end
@@ -31,7 +31,7 @@ if(scale_fig)
 end
 
 
-
+dispVars(signal_type);
 [x, y_comps, Fs, all_params] = set_signal_parameters(signal_type, false);
 
 
@@ -43,7 +43,7 @@ y_comps = y_comps([2, 1, 3]);
 switch signal_type
   case 'nnlfm4'
     x_noisy = x;
-    x = set_signal_parameters('nlfm4', false);    
+    x = set_signal_parameters('nnlfm4', false);    
     d = load('data/test_signals/ffgn_1_02_1_512_0_signal.mat');
     n = d.x(1:256);
     n = n .* (0.6081);
@@ -106,14 +106,14 @@ ys = ylim;
 yset = (ys(2) - ys(1)) / 2;
 % h = text(-42.78, mean(ys) - yset * 0.2, 'components', 'horizontalalignment', 'right', ...
 %          'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
-h = text(-25, mean(ys) - yset * 0.3, 'components', 'horizontalalignment', 'right', ...
+h = text(-25, mean(ys) - yset * 0.15, 'components', 'horizontalalignment', 'right', ...
          'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
 
 set(h, 'rotation', 90);
 
 
 if(print_)
-    fname = ['pics/' signal_type '_test/' signal_type '_comps_justsignal_v3'];
+    fname = ['pics/' signal_type '_test/' signal_type '_comps_justsignal_v4'];
     % print([fname '.svg'], '-dsvg');
     print2eps([fname '.eps']);
 end
@@ -130,7 +130,7 @@ cc = cubehelix(256);
 cc = flipud(cc);
 colormap(cc); % , 1.5, 3, 4, 1, [0.2, 1], [0, 0.9]));
 
-xnn = set_signal_parameters('nlfm4', false);
+xnn = set_signal_parameters('nnlfm4', false);
 
 hx = subplot(1, 2, 1); hold all;
 N = length(x);

@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-11-2021
 %
-% last update: Time-stamp: <2023-07-08 13:57:26 (otoolej)>
+% last update: Time-stamp: <2024-09-22 21:00:16 (otoolej)>
 %-------------------------------------------------------------------------------
 function compare_methods_generic_signal_plot(method_str, signal_type, print_, increase_font)
 if(nargin < 1 || isempty(method_str)), method_str = 'vmd'; end
@@ -24,7 +24,7 @@ if(nargin < 2 || isempty(signal_type)), signal_type = 'bat'; end
 if(nargin < 3 || isempty(print_)), print_ = false; end
 if(nargin < 4 || isempty(increase_font)), increase_font = false; end
 
-scale_fig = true;
+scale_fig = false;
 
 FONT_NAME = 'helvetica';
 FONT_SIZE = 14;
@@ -110,9 +110,8 @@ set_gca_fonts(FONT_NAME, FONT_SIZE, hax);
 % set colours:
 switch signal_type
   case 'bat'
-    if(strcmp(signal_type, 'xtfd') || strcmp(signal_type, 'tvfilt'))
+    if(strcmp(method_str, 'xtfd') || strcmp(method_str, 'tvfilt'))
         llcube = cubehelix(6);
-        llcube = llcube(1:6, :);
     else
         llcube = cubehelix(10);
         llcube = llcube(1:10, :);
@@ -126,6 +125,7 @@ switch signal_type
     llcube = cubehelix(10);
     llcube = llcube(1:8, :);
 end
+
 % lcube = cubehelix(8, 2.5, -1.5, 3.6, 0.7, [0.2, 1], [0.2, 0.6]);
 % lcube = cubehelix(16, 1.5, 3, 4, 1, [0.2, 1], [0, 0.9]);
 % lcube = (lcube(2:end - 1, :));
@@ -151,6 +151,10 @@ switch signal_type
   case 'nnlfm4'
     xshift = -25;
     ymult = 0.17;
+    ymult = 0.0;    
+  case 'bat'
+    xshift = -40;
+    ymult = 0;
     
   otherwise
     xshift = -40;
@@ -167,7 +171,7 @@ set(h, 'rotation', 90);
 if(print_)
     fname = ['pics/' signal_type '_test/' signal_type '_comps_' method_str];
     % print([fname '_v2.svg'], '-dsvg');
-    print2eps([fname '_v3.eps']);
+    print2eps([fname '_v4.eps']);
 end
 
 
@@ -256,7 +260,7 @@ xlabel('samples', 'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
 if(print_)
     fname = ['pics/' signal_type '_test/' signal_type '_terror_' method_str];
     % print([fname '_v3.svg'], '-dsvg');
-    print2eps([fname '_v3.eps']);
+    print2eps([fname '_v4.eps']);
 end
 
 
@@ -306,7 +310,7 @@ switch signal_type
     if(print_)
         fname = ['pics/' signal_type '_test/' signal_type '_TFDcomponents_' method_str];
         % print([fname '_v3.svg'], '-dsvg');
-        print2eps([fname '_v3.eps']);
+        print2eps([fname '_v4.eps']);
     end
     
 

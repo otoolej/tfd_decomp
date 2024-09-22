@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 17-09-2021
 %
-% last update: Time-stamp: <2023-07-06 07:30:26 (otoolej)>
+% last update: Time-stamp: <2024-09-22 15:22:30 (otoolej)>
 %-------------------------------------------------------------------------------
 function plot_2tone_tests_compare(time_mask_tukey, print_)
 if(nargin < 1 || isempty(time_mask_tukey)), time_mask_tukey = true; end
@@ -26,10 +26,10 @@ if(nargin < 2 || isempty(print_)), print_ = false; end
 
 methods = {'vmd', 'tvemd', 'ssst', 'xtfd', 'tvfilt'};
 methods = {'tvemd', 'vmd', 'efd', 'ssst', 'xtfd', 'tvfilt'};
+
     
 if(time_mask_tukey)
     tstr = '_septime_tukey';            
-end
 else
     tstr = '';
 end
@@ -97,25 +97,25 @@ for n = 1:length(methods)
         %     dispVars(methods{n}, 'here');
         % else
         d = load(['./data/plots/tones_test_' methods{n} tstr '.mat']);
-            % end
-            fprintf(col_str('loading parameters from file saved on %s\n', 1), ...
-                    datestr(d.time_now));
+        % end
+        fprintf(col_str('loading parameters from file saved on %s\n', 1), ...
+                datestr(d.time_now));
 
-            rex = d.re;
-            rex(rex > 0.5) = 0.5;
-            imagesc(log10(d.amp_ratio), d.f_ratio, rex, [0 0.5]);
-            axis('xy');
-            axis('tight');
-            set(hxs, 'TickDir', 'out');
-            set(hxs, 'ytick', 0.2:0.2:0.8);
-            set(hxs, 'fontname', FONT_NAME, 'fontsize', FONT_SIZE - 2);
-            if(n > 4)
-        xlabel('amplitude ratio (log)', 'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
-        set(hxs, 'xtick', [-2:2]);
-    else
-        set(hxs, 'xtick', [-2:2]);
-        set(hxs, 'xticklabels', []);
-    end
+        rex = d.re;
+        rex(rex > 0.5) = 0.5;
+        imagesc(log10(d.amp_ratio), d.f_ratio, rex, [0 0.5]);
+        axis('xy');
+        axis('tight');
+        set(hxs, 'TickDir', 'out');
+        set(hxs, 'ytick', 0.2:0.2:0.8);
+        set(hxs, 'fontname', FONT_NAME, 'fontsize', FONT_SIZE - 2);
+        if(n > 4)
+            xlabel('amplitude ratio (log)', 'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
+            set(hxs, 'xtick', [-2:2]);
+        else
+            set(hxs, 'xtick', [-2:2]);
+            set(hxs, 'xticklabels', []);
+        end
     if(n == 1 | n == 3 | n == 5)
         ylabel('frequency ratio', 'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
     else
@@ -134,7 +134,7 @@ for n = 1:length(methods)
     end
     
 
-    title(upper(strrep(methods{n}, 'tv', 'tv-')), 'fontname', FONT_NAME, 'fontsize', FONT_SIZE); % );
+    title(upper(strrep(strrep(methods{n}, 'tv', 'tv-'), 'ssst', 'ssft')), 'fontname', FONT_NAME, 'fontsize', FONT_SIZE); % );
 
 
     % colourbar at the end
@@ -156,7 +156,7 @@ end
 
 if(print_)
     % print(['pics/two_tone_test_6methods_' tstr '_v2.svg'], '-dsvg');
-    print2eps(['pics/two_tone_test_6methods_' tstr '_v5.eps']);
+    print2eps(['pics/two_tone_test_6methods_' tstr '_v6.eps']);
 end
 
 

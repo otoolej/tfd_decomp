@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 24-09-2021
 %
-% last update: Time-stamp: <2024-09-15 21:11:09 (otoolej)>
+% last update: Time-stamp: <2024-09-22 22:03:37 (otoolej)>
 %-------------------------------------------------------------------------------
 function [x, x_components, Fs, all_params] = set_signal_parameters(signal_name, db_plot)
 if(nargin < 2 || isempty(db_plot)), db_plot = false; end
@@ -48,7 +48,6 @@ end
 % 2. default parameters for all methods
 %---------------------------------------------------------------------
 [xtfd, tvfilt, ssst, wsst, vmd, vncmd, tvemd, ncme, msst] = set_default_params_all_methods(N);
-
 
 
 switch signal_name
