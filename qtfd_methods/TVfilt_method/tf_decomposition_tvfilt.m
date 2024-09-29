@@ -58,5 +58,4 @@ decomp = tv_filtering(if_tracks, tfd_mask, signal1, params.L_filt, 'lossless', N
 
 
 % remove zero-padding
-Mh = ceil(params.L_filt / 2);
-decomp = decomp(:, Mh:end - Mh - 1);
+decomp = decomp(:, 1:N);

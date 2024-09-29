@@ -28,7 +28,8 @@ N = length(signal1);
 N_freq = size(tfd_mask, 1);
 
 % Do TV filtering
-alpha = (M-1)/2; 
+alpha = (M-1)/2;
+Mh = floor(M / 2);
 n = 0:M-1;
 decomp1 = zeros(N_components, N); %HDF = zeros(N,N/2); %HDF = tfp;
                                   % disp(N_components);
@@ -65,9 +66,8 @@ for jj = 1:N_components
             end
         end
     end
-    hd = zeros(N, M); % filter response, time domain
-                      %hdf = zeros(N, N/2); % filter response, frequency domain
-                      % time-varying filter is simple windowed, bandpass FIR at the moment
+    hd = zeros(N, M);
+    % time-varying filter is simple windowed, bandpass FIR at the moment; could change
     for ii = rng(1):rng(2)
         if mod(M,2)==1
             hd(ii,n~=alpha) = 1./(pi.*(n(n~=alpha)-alpha)).*(sin(2*pi*fc2(ii)*(n(n~=alpha)-alpha))-sin(2*pi*fc1(ii)*(n(n~=alpha)-alpha)));  % n~=alpha M = odd
@@ -81,14 +81,53 @@ for jj = 1:N_components
 
     % DO FILTERING 
     for ii = rng(1):rng(2)
-        filt_signal1 = filter(hd(ii,:), 1, signal1);
-        decomp1(jj, ii) = filt_signal1(ii);
+        decomp1(jj, ii) = tv_filt(signal1, hd(ii, :), ii, N, Mh);
     end
 
-    % for ii = rng(1):rng(2)
-    %         % Element-wise multiplication using '.*' and then summing the result
-    %     filtered_signal = sum(signal1(ii:ii+M-1) .* hd(ii, :));
-    %     decomp1(jj, ii) = filtered_signal;  % Assign the result directly
-    % end
+end
 
+
+end
+
+
+function y_filt_n = tv_filt(x, hd, n, N, Mh)
+%---------------------------------------------------------------------
+% time-varying filtering operation
+%---------------------------------------------------------------------
+    y_filt_n = 0;
+
+    % Loop over k = -M/2 to M/2
+    for k = -Mh : Mh
+        idx_hd = k + Mh + 1; 
+        idx_x = n - k;
+        
+        % Check if idx_x is within the valid range
+        if idx_x >= 1 && idx_x <= N
+            % Accumulate the convolution sum
+            y_filt_n = y_filt_n + hd(idx_hd) * x(idx_x);
+        end
+    end
+end
+
+function y_filt_n = tv_filt_vectorized(x, hd, n, N, M)
+%---------------------------------------------------------------------
+% Time-varying filtering operation
+% x: input signal
+% hd: filter coefficients (ordered from negative to positive time)
+% n: specific sample point (scalar)
+%---------------------------------------------------------------------
+    Mh = floor(M / 2);      % Half-length of the filter
+    k = -Mh : (M - Mh - 1); % Adjusted range to cover all filter coefficients
+    idx_hd = k + Mh + 1;    % Adjusted indices for hd (1-based indexing)
+    idx_x = n - k;
+
+    % Determine valid indices (within the range of x)
+    valid_idx = idx_x >= 1 & idx_x <= N;
+
+    % Extract valid filter coefficients and signal values
+    hd_valid = hd(idx_hd(valid_idx));
+    x_valid = x(idx_x(valid_idx));
+
+    % Compute the convolution sum
+    y_filt_n = sum(hd_valid .* x_valid);
 end

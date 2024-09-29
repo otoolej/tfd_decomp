@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 19-07-2023
 %
-% last update: Time-stamp: <2023-07-19 19:46:59 (otoolej)>
+% last update: Time-stamp: <2024-09-30 00:40:10 (otoolej)>
 %-------------------------------------------------------------------------------
 function [comp_time_mean, comp_time_std] = timeit_methods()
 
@@ -25,7 +25,6 @@ signal_types = {'2tone1', '2tone2', 'nnlfm4', 'noise', 'bat'};
 % signal_types = {'2tone2'};
 % all_methods = {'vncmd'};
 
-% all_methods = {'tvfilt'};
 n_iter = 100;
 
 comp_time_mean = zeros(length(signal_types), length(all_methods));
