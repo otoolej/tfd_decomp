@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-11-2021
 %
-% last update: Time-stamp: <2024-09-22 21:00:16 (otoolej)>
+% last update: Time-stamp: <2024-10-06 18:59:21 (otoolej)>
 %-------------------------------------------------------------------------------
 function compare_methods_generic_signal_plot(method_str, signal_type, print_, increase_font)
 if(nargin < 1 || isempty(method_str)), method_str = 'vmd'; end
@@ -171,7 +171,7 @@ set(h, 'rotation', 90);
 if(print_)
     fname = ['pics/' signal_type '_test/' signal_type '_comps_' method_str];
     % print([fname '_v2.svg'], '-dsvg');
-    print2eps([fname '_v4.eps']);
+    print2eps([fname '_v5.eps']);
 end
 
 
@@ -260,7 +260,7 @@ xlabel('samples', 'fontname', FONT_NAME, 'fontsize', FONT_SIZE);
 if(print_)
     fname = ['pics/' signal_type '_test/' signal_type '_terror_' method_str];
     % print([fname '_v3.svg'], '-dsvg');
-    print2eps([fname '_v4.eps']);
+    print2eps([fname '_v5.eps']);
 end
 
 
@@ -310,7 +310,7 @@ switch signal_type
     if(print_)
         fname = ['pics/' signal_type '_test/' signal_type '_TFDcomponents_' method_str];
         % print([fname '_v3.svg'], '-dsvg');
-        print2eps([fname '_v4.eps']);
+        print2eps([fname '_v5.eps']);
     end
     
 

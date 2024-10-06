@@ -17,15 +17,15 @@
 % John M. O' Toole, University College Cork
 % Started: 09-07-2023
 %
-% last update: Time-stamp: <2024-09-08 16:01:47 (otoolej)>
+% last update: Time-stamp: <2024-10-07 00:12:13 (otoolej)>
 %-------------------------------------------------------------------------------
 function [num_comps, all_methods, signal_types] = num_components_decomp()
 
     
 all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'vmd', 'vncmd'};
 signal_types = {'2tone1', '2tone2', 'nnlfm4', 'white-noise','noise', 'bat'};
-signal_types = {'2tone1'};
-all_methods = {'efd'};
+signal_types = {'white-noise', 'noise'};
+all_methods = {'xtfd'};
 
 num_comps = zeros(length(signal_types), length(all_methods));
 corr_x = zeros(length(signal_types), length(all_methods));
@@ -84,4 +84,5 @@ if(iscell(y_comps))
 else
     y = y_comps;
 end
+
 

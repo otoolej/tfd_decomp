@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 24-09-2021
 %
-% last update: Time-stamp: <2024-09-22 22:03:37 (otoolej)>
+% last update: Time-stamp: <2024-10-06 23:55:16 (otoolej)>
 %-------------------------------------------------------------------------------
 function [x, x_components, Fs, all_params] = set_signal_parameters(signal_name, db_plot)
 if(nargin < 2 || isempty(db_plot)), db_plot = false; end
@@ -177,8 +177,9 @@ switch signal_name
     xtfd.Nfreq = 128;
     
     N = length(x);
-    l_lag = make_odd(ceil(N / 4));    
-    l_dopp = make_odd(ceil(N / 2));
+    l_lag = make_odd(floor(3 * sqrt(N)));    
+    l_dopp = make_odd(floor(6 * sqrt(N)));
+    
     xtfd = xtfd.set_dopp_kernel(l_dopp, {'hamm'});
     xtfd = xtfd.set_lag_kernel(l_lag, {'dolph', 100});
     tvfilt = tvfilt.set_dopp_kernel(l_dopp, {'hamm'});
@@ -214,8 +215,9 @@ switch signal_name
     xtfd.Nfreq = 128;
     
     N = length(x);
-    l_lag = make_odd(ceil(N / 4));    
-    l_dopp = make_odd(ceil(N / 2));
+    l_lag = make_odd(floor(3 * sqrt(N)));    
+    l_dopp = make_odd(floor(6 * sqrt(N)));
+    
     xtfd = xtfd.set_dopp_kernel(l_dopp, {'hamm'});
     xtfd = xtfd.set_lag_kernel(l_lag, {'dolph', 100});
     tvfilt = tvfilt.set_dopp_kernel(l_dopp, {'hamm'});
