@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 14-09-2021
 %
-% last update: Time-stamp: <2024-09-21 22:52:29 (otoolej)>
+% last update: Time-stamp: <2024-10-31 20:09:46 (otoolej)>
 %-------------------------------------------------------------------------------
 function re = sep_2tones_test(method, time_mask, save_, db_plot, L_grid)
 if(nargin < 1 || isempty(method)), method = 'xTFD'; end
@@ -195,7 +195,7 @@ if(save_)
     end
 
     time_now = now;
-    save(['./data/plots/tones_test_' method tstr '_v3.mat'], 're', 'amp_ratio', 'f_ratio', ...
+    save(['./data/plots/tones_test_' method tstr '_v4.mat'], 're', 'amp_ratio', 'f_ratio', ...
          'time_now');
 end
 

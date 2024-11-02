@@ -1,7 +1,7 @@
 BSD 3-Clause License
 
-Copyright (c) 2019, John M O' Toole, University College Cork, Ireland
-Copyright (c) 2019, Nathan J Stevenson, Queensland Institute of Medical Research, Australia
+Copyright (c) 2024, John M O' Toole, University College Cork, Ireland
+Copyright (c) 2024, Nathan J Stevenson, Queensland Institute of Medical Research, Australia
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

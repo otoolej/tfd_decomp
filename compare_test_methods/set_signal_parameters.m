@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 24-09-2021
 %
-% last update: Time-stamp: <2024-10-06 23:55:16 (otoolej)>
+% last update: Time-stamp: <2024-10-29 23:13:15 (otoolej)>
 %-------------------------------------------------------------------------------
 function [x, x_components, Fs, all_params] = set_signal_parameters(signal_name, db_plot)
 if(nargin < 2 || isempty(db_plot)), db_plot = false; end

@@ -17,15 +17,17 @@
 % John M. O' Toole, University College Cork
 % Started: 09-07-2023
 %
-% last update: Time-stamp: <2024-10-07 00:12:13 (otoolej)>
+% last update: Time-stamp: <2024-10-29 23:55:09 (otoolej)>
 %-------------------------------------------------------------------------------
-function [num_comps, all_methods, signal_types] = num_components_decomp()
+function [num_comps, all_methods, signal_types] = num_components_decomp(all_methods, signal_types)
+if(nargin < 1 || isempty(all_methods))
+    all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'vmd', 'vncmd'};
+end
+if(nargin < 2 || isempty(signal_types))
+    signal_types = {'2tone1', '2tone2', 'nnlfm4', 'white-noise','noise', 'bat'};
+end
 
-    
-all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'vmd', 'vncmd'};
-signal_types = {'2tone1', '2tone2', 'nnlfm4', 'white-noise','noise', 'bat'};
-signal_types = {'white-noise', 'noise'};
-all_methods = {'xtfd'};
+
 
 num_comps = zeros(length(signal_types), length(all_methods));
 corr_x = zeros(length(signal_types), length(all_methods));
@@ -48,9 +50,10 @@ for p = 1:length(signal_types)
                     q = q - 1;
                     break;
                 end
-                % y_est = sum(cat(1, y_comps{1:q}));
                 y_est = sum_components(y_comps(1:q));
                 y_eng = sum(abs(y_est) .^ 2);
+                
+                dispVars(q, x_eng, y_eng, 100 * y_eng / x_eng);
                 
                 % dispVars(size(y_est'), size(x));
                 % corr_x(p, n) = corr(y_est', x);
@@ -61,7 +64,7 @@ for p = 1:length(signal_types)
         if(y_eng < (0.9 * x_eng))
             q = -q;
         end
-        dispVars(y_eng, x_eng, q);
+        dispVars(y_eng, x_eng, q, 100 * y_eng / x_eng);
         
         corr_x(p, n) = corr(y_est', x);        
         num_comps(p, n) = q; 

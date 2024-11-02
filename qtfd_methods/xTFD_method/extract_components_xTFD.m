@@ -92,7 +92,7 @@ if(~params.correct_amplitude_bw)
 end
 
 % a. estimate components from IF (but without IP):
-s_nophase = synth_signal_sinmodel(if_tracks, [], qtfd, Fs, [], g2);
+s_nophase = synth_signal_sinmodel(if_tracks, [], qtfd, Fs, [], []);
 %  ... and combine into 1 signal:
 % s_all = combine_one_signal(s_nophase);
 s_all = sum(cat(2, s_nophase{:}), 2);

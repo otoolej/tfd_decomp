@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 17-09-2021
 %
-% last update: Time-stamp: <2024-09-22 15:22:30 (otoolej)>
+% last update: Time-stamp: <2024-10-31 23:12:14 (otoolej)>
 %-------------------------------------------------------------------------------
 function plot_2tone_tests_compare(time_mask_tukey, print_)
 if(nargin < 1 || isempty(time_mask_tukey)), time_mask_tukey = true; end
@@ -92,12 +92,12 @@ for n = 1:length(methods)
         % hxs = subplot(2, 3, n); hold all;
         hxs = subplot(3, 2, n); hold all;
 
-        % if(strcmp(methods{n}, 'xtfd'))
-        %     d = load(['./data/tones_test_' methods{n} tstr '_v3.mat']);
-        %     dispVars(methods{n}, 'here');
-        % else
-        d = load(['./data/plots/tones_test_' methods{n} tstr '.mat']);
-        % end
+        if(strcmp(methods{n}, 'xtfd'))
+            d = load(['./data/plots/tones_test_' methods{n} tstr '_v4.mat']);
+            dispVars(methods{n}, 'here');
+        else
+            d = load(['./data/plots/tones_test_' methods{n} tstr '.mat']);
+        end
         fprintf(col_str('loading parameters from file saved on %s\n', 1), ...
                 datestr(d.time_now));
 
@@ -156,7 +156,7 @@ end
 
 if(print_)
     % print(['pics/two_tone_test_6methods_' tstr '_v2.svg'], '-dsvg');
-    print2eps(['pics/two_tone_test_6methods_' tstr '_v6.eps']);
+    print2eps(['pics/two_tone_test_6methods_' tstr '_v7.eps']);
 end
 
 

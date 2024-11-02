@@ -20,7 +20,7 @@
 % John M. O' Toole, University College Cork
 % Started: 18-09-2020
 %
-% last update: Time-stamp: <2023-07-01 08:47:56 (otoolej)>
+% last update: Time-stamp: <2024-11-02 19:18:43 (otoolej)>
 %-------------------------------------------------------------------------------
 function s_est_tracks = synth_signal_sinmodel(if_tracks, ip_tracks, S, Fs, ia_tracks, g2)
 if(nargin < 2 || isempty(ip_tracks)), ip_tracks=[]; end
@@ -83,26 +83,23 @@ for it = 1:Ntracks
         % -3 dB point for of the lag window:
         half_amp = 10 ^ (-3 / 10);
         
-        % estimate the bandwidth at -3dB of the lag window in the frequency domain:
-        g2_pad = padWin(g2, Nfreq);
-        bw_freq = get_bandwidth(circshift(real(fft(g2_pad)), ceil(Nfreq / 2)), [], half_amp, false);
-
-        norm_factor = bw_freq;
-
+        bwq = zeros(L, 1);
+        ikeep = [];
         for mm = 1:L
-            bw = get_bandwidth(Smag(cur_track(mm, 1), :), cur_track(mm, 2), half_amp);
-            % dispVars(norm_factor, bw, bw / norm_factor);
-
-
-            if(~isempty(bw) && bw > 1)
-                amp_track(mm) = amp_track(mm) .* (bw / norm_factor);
+            bwq(mm) = get_bandwidth(Smag(cur_track(mm, 1), :), cur_track(mm, 2), half_amp);
+            if(~isempty(bwq(mm)) && bwq(mm) > 1)
+                %  bandwidth shouldn't be less than 1 sample point:
+                ikeep = [ikeep mm];
             end
         end
-        % stats_summary_vector(bw_all, 2);
-
+        max_amp = max(amp_track);
+        bwq_max = bwq(find(amp_track == max_amp, 1));
+        bwq = bwq ./ bwq_max; 
+        amp_track(ikeep) = amp_track(ikeep) .* bwq(ikeep);
+        amp_track(amp_track > max_amp) = max_amp;
+        
     end
     amp_track(amp_track < 0) = 0;
-    
     
     
     DBplot_tracks = false;
