@@ -67,7 +67,7 @@ which sets the TFD to be of size `256 x 32,768`. Accuracy for the xTFD method ma
 by increasing `Nfreq`: a larger value reduces error but increase computational load and memory
 requirements. The default value for `Nfreq` is set to 8,192.
 
-```
+---
 
 ## Reference 
 
