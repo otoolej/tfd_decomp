@@ -3,6 +3,7 @@ notes.org
 *svg
 docs/
 **/old/
+tmp/
 README_test.md
 compare_test_methods/
 data/plots/
