@@ -115,7 +115,6 @@ if(params.phase_correction)
         set_figure(987); 
         plot(ip_tracks{1}(:,1), ip_tracks{1}(:,2));
     end
-    
 
 else
     % only for comparing without phase adjustment:

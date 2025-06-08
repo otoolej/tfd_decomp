@@ -2,18 +2,39 @@
 
 Code for 2 decomposition methods, both of which estimate the instantaneous frequency of
 signal components using quadratic time-frequency distributions (TFDs). The first method
-decomposes the signal using a time-varying filtering (the `TV-filt` method). The second
+decomposes the signal using time-varying filtering (the `TV-filt` method). The second
 method decomposes the signal using phase information from the cross TFD (the `xTFD`
-method).
+method). See reference O'Toole and Stevenson (2025) for full details.
 
 Use the `tfd_decomposition` to call either method. See `help tfd_decomposition` for more
 details. For example, to extract 2 components from signal `x` using the TV-filter method, then:
 
 ```matlab
+%  generate test signal with 2 components
+N = 400;
+n = 0:N - 1;
+Nq = floor(N / 4);
+x1 = cos( 2*pi.*(0.05.*n + ((0.3-0.05)/(2*N)).*(n.^2)) );
+x2 = cos( 2*pi.*(0.25.*n + ((0.4-0.25)/(2*N)).*(n.^2)) + (pi / 4));
+x1((N - Nq):end) = 0;
+x2(1:Nq) = 0;
+x = x1 + x2;
+
+
+% perform the decomposition
 [y, y_comps] = tfd_decomposition(x, 'tvfilt', 2);
 ```
 
 where `y_comps` is a cell array of the 2 components and `y` is sum of the components.
+
+
+For example, compare the true and estimated first component:
+```matlab
+figure(1); hold all;
+plot(x1);
+plot(y_comps{1});				
+```
+
 
 ## Parameters
 Each method has a set of parameters that can be changed. These are managed through the
@@ -34,81 +55,21 @@ which sets the Doppler kernel to Hanning window of length 151 samples and the la
 to a Hamming window of length 51 samples.
 
 To change the resolution of sampling in the frequency direction in the TFD for the `xTFD` method, do as follows:
-
+	
 ```matlab
 % first generate the parameter set:
-params_xtfd = decomp_params(256, 'xtfd');
+params_xtfd = decomp_params(256, 'xtfd'); 
 
 % set the rate of sampling in the frequency direction of the TFD:
 params_xtfd.Nfreq = 32768;
 ```
-which sets the TFD to be of size `256 x 32,768`. Accuracy for the xTFD method is tied to
-the `Nfreq`: a larger value reduces error but increase computational load and memory
+which sets the TFD to be of size `256 x 32,768`. Accuracy for the xTFD method may improve
+by increasing `Nfreq`: a larger value reduces error but increase computational load and memory
 requirements. The default value for `Nfreq` is set to 8,192.
 
-
-## 2-tone test
-To run the 2-tone test for each method, call:
-
-```matlab
-time_mask = false;
-
-sep_2tones_test('xtfd', time_mask);
-
 ```
 
-where `time_mask` is set to `true` to use the time-separated signal components. Need to
-call `sep_2tones_test` for each method. That is, for all methods:
+## Reference 
 
-```matlab
-time_mask = false;
-
-all_methods = {'tvfilt', 'xtfd', 'vmd', 'ssst', 'edf', 'tvemd'};
-     
-for n = 1:length(all_methods)
-	sep_2tones_test(all_methods{n}, time_mask, true, false, 50);
-end
-
-% and plot all:
-plot_2tone_tests_compare(false);
-```
-
-and set `time_mask = true;` and same again.
-
-## Test signals
-
-### a) bat signal
-
-To generate the plots for bat signals, decomposing to a maximum of 5 components, do as follows:
-```matlab
-     print_ = false;
-     all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'msst', 'vmd'};
-     
-     for n = 1:length(all_methods)
-          compare_methods_generic_signal_plot(all_methods{n}, 'bat', print_);
-     end
-```
-
-
-### b) fractional Gaussian noise
-
-```matlab
-       print_ = false;
-       all_methods = {'tvfilt', 'xtfd', 'efd', 'tvemd', 'ssst', 'msst', 'vmd'};
-
-       for n = 1:length(all_methods)
-           compare_methods_noise_signals_plot(all_methods{n}, print_);
-       end
-```
-
-### c) multicomponent nonlinear FM signal with noise
-```matlab
-	compare_methods_generic_signal_plot('tvfilt', 'nnlfm4', false);
-	compare_methods_generic_signal_plot('xtfd', 'nnlfm4', false);
-```
-
-and plot:
-
-```matlab
-	plot_nnlfm4_testsignal('nnlfm4', false);
-```
+JM O'Toole and NJ Stevenson, /Nonstationary Signal Decomposition using Quadratic
+Time--Frequency Distributions/, Signal Processing, 2025.

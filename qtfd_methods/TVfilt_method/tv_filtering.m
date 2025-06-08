@@ -78,12 +78,10 @@ for jj = 1:N_components
         hd(ii,:) = hd(ii,:).*hamming(M)';
     end
     
-
-    % DO FILTERING 
+    % DO FILTERING
     for ii = rng(1):rng(2)
         decomp1(jj, ii) = tv_filt(signal1, hd(ii, :), ii, N, Mh);
     end
-
 end
 
 

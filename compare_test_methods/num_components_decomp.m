@@ -17,7 +17,7 @@
 % John M. O' Toole, University College Cork
 % Started: 09-07-2023
 %
-% last update: Time-stamp: <2024-10-29 23:55:09 (otoolej)>
+% last update: Time-stamp: <2024-11-03 20:20:49 (otoolej)>
 %-------------------------------------------------------------------------------
 function [num_comps, all_methods, signal_types] = num_components_decomp(all_methods, signal_types)
 if(nargin < 1 || isempty(all_methods))
@@ -66,7 +66,8 @@ for p = 1:length(signal_types)
         end
         dispVars(y_eng, x_eng, q, 100 * y_eng / x_eng);
         
-        corr_x(p, n) = corr(y_est', x);        
+        % corr_x(p, n) = corr(y_est', x);
+        corr_x(p, n) = sum(abs(y_est(:).' - x(:).') .^ 2) / x_eng;
         num_comps(p, n) = q; 
     end
 end
