@@ -85,7 +85,7 @@ requirements. The default value for `Nfreq` is set to 8,192.
 
 The full list of default parameters for signal of length `N` 
 
-| parameter              | default                                                | description           | specific to method |
+| parameter              | description                                            | default               | specific to method |
 |:-----------------------|--------------------------------------------------------|-----------------------|--------------------|
 | `max_no_peaks`         | maximum number of peaks to consdier at each time-slice | 8                     |                    |
 | `delta_freq_samples`   | maximum rate-of-change of IF                           | √N/2                  |                    |
