@@ -93,9 +93,6 @@ classdef decomp_params
         %---------------------------------------------------------------------
         % parameters for the TV filt method
         %---------------------------------------------------------------------
-        % max. bandwidth for edge-linker parameters
-        % obj.delta_freq_samples = make_odd(obj.N / obj.wx / 2);
-        % obj.delta_freq_samples = floor(sqrt(obj.N) / 2);
             obj.delta_freq_samples = floor(sqrt(obj.N) / 2);
             % minimum length of component:
             % obj.min_if_length = floor(obj.N / 8);
@@ -131,17 +128,6 @@ classdef decomp_params
             l_dopp = make_odd(ceil(N_sqrt * 4));
             obj = obj.set_dopp_kernel(l_dopp);
             obj = obj.set_lag_kernel(l_lag);            
-
-            
-            % length of Doppler and lag window:
-            % l_dopp = make_odd(floor(obj.N / 2));
-            % % l_lag = make_odd(floor(sqrt(obj.N) * 1.5));
-            % l_lag = make_odd(floor(obj.N / 4));
-            % % l_lag = 63;
-
-            % % length of Doppler and lag window:
-            % obj = obj.set_dopp_kernel(l_dopp);
-            % obj = obj.set_lag_kernel(l_lag);
         end
 
         function obj = set_dopp_kernel(obj, ld, dparams)

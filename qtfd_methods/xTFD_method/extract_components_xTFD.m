@@ -45,12 +45,6 @@ end
 %---------------------------------------------------------------------
 % 1. generate the Q-TFD
 %---------------------------------------------------------------------
-fprintf('doppler: ');
-dispVars(params.doppler_kernel);
-fprintf('lag: ');
-dispVars(params.lag_kernel);
-dispVars(N, params.Nfreq);
-dispVars(params.method);
 % generate the TFD
 [qtfd, g2] = qtfd_sep_kern(x, params.doppler_kernel, params.lag_kernel, N, params.Nfreq);
 % scale
@@ -58,7 +52,8 @@ qtfd = scale_tfd(qtfd, g2, N);
 
 
 if(db_plot)
-    set_figure(2); 
+    set_figure(2);
+    title('time-frequency distribution');
     vtfd(qtfd); axis('tight');
 end
 
@@ -165,30 +160,12 @@ end
 % 5. PLOT
 %---------------------------------------------------------------------
 if(db_plot)
-    % set_figure(888);
-    % subplot(211); hold all;
-    % title('xTFD method');
-    % nn = 1:length(x); t = nn./Fs;
-    % plot(t, x, '-o', t, y, '-+');
-    % xlim([t(1) t(end)]);
-    % y_lims = ylim;
-    
-    % subplot(212); hold all;
-    % plot(t, x_residual);    
-    % ylim(y_lims);
-    % xlim([t(1) t(end)]);    
-    fprintf('MSE = %g\n', mean(abs(x_residual).^2));
-
     if(params.phase_correction)
-        set_figure(301); 
-        vtfd(angle(xtf), [], Fs);
+        set_figure(301);
+        title('Phase of the cross time-frequency distribution');
+        vtfd(angle(xtf)); axis('tight');
     end
-
-    % plot the components:
-    % plot_components(x, x_components, Fs, 24, N_components, false);    
 end
-
-
 
 
 

@@ -6,31 +6,35 @@
 % Inputs: 
 %     x            - signal (length-N)
 %     method       - decomposition method; either 'xtfd' or 'tvfilt' (default)
-%     N_components - number of components to extract (default =1)
+%     N_components - maximum number of components to extract (default=10)
 %     params       - parameters for the methods (object; see 'decomp_params.m')
-%     db_plot      - plot (default =false)
+%     db_plot      - plot (default=false)
 % 
 %
 % Outputs: 
 %     y       - output signal consisting of sum of components
 %     y_comps - cell array containing the components
 %
-% Example:
-%     
 %
 
 % John M. O' Toole, University College Cork
 % Started: 20-04-2022
 %
-% last update: Time-stamp: <2024-09-21 22:46:08 (otoolej)>
+% last update: Time-stamp: <2025-06-12 21:02:36 (otoolej)>
 %-------------------------------------------------------------------------------
 function [y, y_comps] = tfd_decomposition(x, method, N_components, params, db_plot)
 if(nargin < 2 || isempty(method)), method = 'tvfilt'; end
-if(nargin < 3 || isempty(N_components)), N_components = 1; end
+if(nargin < 3 || isempty(N_components)), N_components = 10; end
 if(nargin < 4 || isempty(params))
     params = decomp_params(length(x), method);
 end
 if(nargin < 5 || isempty(db_plot)), db_plot = false; end
+
+
+% must be a row vector and even length signal:
+x = x(:)';
+x = x(1:end - mod(length(x), 2));
+
 
 
 % if preprocessing the signal:
@@ -83,4 +87,8 @@ if(params.pad_signal)
     end
 
     x = xo;
+end
+
+if(db_plot && ~isempty(y_comps))
+    err_plot(y, y_comps, x, 20, method);
 end
