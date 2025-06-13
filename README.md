@@ -89,7 +89,7 @@ The full list of default parameters for signal of length `N`
 |:-----------------------|--------------------------------------------------------|-----------------------|--------------------|
 | `max_no_peaks`         | maximum number of peaks to consdier at each time-slice | 8                     |                    |
 | `delta_freq_samples`   | maximum rate-of-change of IF                           | √N/2                  |                    |
-| `min_if_length`        | minmum lenght of IF                                    | 4√N                   |                    |
+| `min_if_length`        | minmum length of IF                                    | 4√N                   |                    |
 | `doppler_kernel`       | doppler window (TFD kernel)                            | {4√N, 'hamm'}         |                    |
 | `lag_kernel`           | lag window (TFD kernel)                                | {2√N, 'dolph', [100]} |                    |
 | `pad_signal`           | pad signal before processing                           | false                 |                    |
