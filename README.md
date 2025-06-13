@@ -26,7 +26,7 @@ x = x1 + x2;
 [y, y_comps] = tfd_decomposition(x, 'tvfilt', [], [], true);
 ```
 
-where `y_comps` is a cell array of the 2 components and `y` is sum of the components. The
+where `y_comps` is a cell array containing 2 components and `y` is sum of the components. The
 input arguments for `tfd_decomposition` are as follows:
 
 ```matlab
@@ -52,7 +52,7 @@ frequency laws extracted from the TFD.
 
 ## Parameters
 Each method has a set of parameters that can be changed. These are managed through the
-class `decomp_params`. To set the parameters, create an `decomp_params` object
+class `decomp_params`. To set the parameters, create a `decomp_params` object
 passing in both signal length and method, e.g.
 
 ```matlab
@@ -78,7 +78,7 @@ params_xtfd = decomp_params(256, 'xtfd');
 params_xtfd.Nfreq = 32768;
 ```
 which sets the TFD to be of size `256 x 32,768`. Accuracy for the xTFD method may improve
-by increasing `Nfreq`: a larger value reduces error but increase computational load and memory
+by increasing `Nfreq`: a larger value reduces error but increases computational load and memory
 requirements. The default value for `Nfreq` is set to 8,192.
 
 ### Parameter list
@@ -87,7 +87,7 @@ The full list of default parameters for signal of length `N`
 
 | parameter              | description                                            | default               | specific to method |
 |:-----------------------|--------------------------------------------------------|-----------------------|--------------------|
-| `max_no_peaks`         | maximum number of peaks to consdier at each time-slice | 8                     |                    |
+| `max_no_peaks`         | maximum number of peaks to consider at each time-slice | 8                     |                    |
 | `delta_freq_samples`   | maximum rate-of-change of IF                           | √N/2                  |                    |
 | `min_if_length`        | minmum length of IF                                    | 4√N                   |                    |
 | `doppler_kernel`       | doppler window (TFD kernel)                            | {4√N, 'hamm'}         |                    |
