@@ -123,18 +123,18 @@ err(1, 2) = length(r_comps1);
 err(2, 1) = sum(abs(x-r1))./sum(abs(x));
 err(2, 2) = length(r_comps1);
 
-% sorter minimum-duration of components generates more components:
+% shorter minimum-duration of components generates more components:
 params_tvfilt.min_if_length = 32;
 [r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params_tvfilt);
 err(3, 1) = sum(abs(x-r1'))./sum(abs(x));
 err(3, 2) = length(r_comps1);
 
 params_tvfilt.min_if_length = 12;
-[r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params_tvfilt, true);
+[r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params_tvfilt);
 err(4, 1) = sum(abs(x-r1'))./sum(abs(x));
 err(4, 2) = length(r_comps1);
 
-print_table(err, {'error', '#componets'}, {'TVFILT', 'XTFD', 'TVFILT (32)', 'TVFILT (12)'}, [], [], [3, 0]);
+print_table(err, {'error', '#components'}, {'TVFILT', 'XTFD', 'TVFILT (32)', 'TVFILT (12)'}, [], [], [3, 0]);
 ```
 
 
@@ -143,5 +143,5 @@ print_table(err, {'error', '#componets'}, {'TVFILT', 'XTFD', 'TVFILT (32)', 'TVF
 
 ## Reference 
 
-JM O'Toole and NJ Stevenson, /Nonstationary Signal Decomposition using Quadratic
-Time--Frequency Distributions/, Signal Processing, 2025.
+JM O'Toole and NJ Stevenson, "Nonstationary Signal Decomposition using Quadratic
+Time--Frequency Distributions", Signal Processing, 2025.
