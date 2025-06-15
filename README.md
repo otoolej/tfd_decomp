@@ -96,7 +96,7 @@ The full list of default parameters for signal of length `N`
 | `low_pass_filter`      | low-pass filter before processing                      | false               |                    |
 | `correct_amplitude_bw` | apply amplitude correction                             | true                | XTFD               |
 | `phase_correction`     | apply phase correction                                 | true                | XTFD               |
-| Nfreq                  | sampling rate in frequency direction of TFD            | 8192                | XTFD               |
+| `Nfreq`                  | sampling rate in frequency direction of TFD            | 8192                | XTFD               |
 | `L_filt`               | filter length                                          | 2√N                 | TV-FILT            |
 | `qtfd_max_thres`       | threshold TFD plane with this fraction of maximum      | 0.01                | TV-FILT            |
 
