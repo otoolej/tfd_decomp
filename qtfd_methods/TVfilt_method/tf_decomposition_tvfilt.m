@@ -49,6 +49,12 @@ end
                                             params.min_if_length, ...
                                             params.max_no_peaks, ...
                                             params.qtfd_max_thres);
+if(length(if_tracks) == 0)
+    disp("no tracks found in the TFD; exiting");
+    decomp = [];
+    return;
+end
+
 
 
 %---------------------------------------------------------------------

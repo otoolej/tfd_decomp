@@ -91,7 +91,7 @@ The full list of default parameters for signal of length `N`
 | `delta_freq_samples`   | maximum rate-of-change of IF                           | √N/2                  |                    |
 | `min_if_length`        | minmum lenght of IF                                    | 4√N                   |                    |
 | `doppler_kernel`       | doppler window (TFD kernel)                            | {4√N, 'hamm'}         |                    |
-| `lag_kernel`           | lag window (TFD kernel)                                | {2√N, 'dolph', [100]} |                    |
+| `lag_kernel`           | lag window (TFD kernel)                                | {2√N, 'dolph', 100} |                    |
 | `pad_signal`           | pad signal before processing                           | false                 |                    |
 | `low_pass_filter`      | low-pass filter before processing                      | false                 |                    |
 | `correct_amplitude_bw` | apply amplitude correction                             | true                  | XTFD               |
@@ -101,40 +101,59 @@ The full list of default parameters for signal of length `N`
 | `qtfd_max_thres`       | threshold TFD plane with this fraction of maximum      | 0.01                  | TV-FILT            |
 
 
-### Examples of different TFD kernels
+
+### Examples of different TFD kernels and minimum duration of IF tracks
 The TFD kernel controls the level of smoothing in the TFD and this can directly impact on
-the number and type of components extracted. Here are some examples:
+the number and type of components extracted. Also, reducing the minimum duration of IF
+tracks (`min_if_length`) will increase the number of components. Here are some examples
+using the TV-FILT method:
 
 
 ```matlab
 x = randn(1,1024);
-err = zeros(4, 2);
 n_max_components = 200;
 
-params_tvfilt = decomp_params(length(x), 'tvfilt');
-params_xtfd = decomp_params(length(x), 'xtfd');
 
-% default parameters for both methods produces 8 components:
-[r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params_tvfilt);
-err(1, 1) = sum(abs(x-r1'))./sum(abs(x));
-err(1, 2) = length(r_comps1);
+% 1. default parameters:
+params = decomp_params(length(x), 'tvfilt');
+fprintf("TFD kernel default parameters:\n");
+fprintf("Doppler kernel: %d\n", params.doppler_kernel{1});
+fprintf("Lag kernel: %d\n", params.lag_kernel{1});
+fprintf("Minimum IF duration (samples): %d\n", params.min_if_length);
 
-[r1, r_comps1] = tfd_decomposition(x, 'xtfd', n_max_components, params_xtfd);
-err(2, 1) = sum(abs(x-r1))./sum(abs(x));
-err(2, 2) = length(r_comps1);
+[r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params);
+fprintf('TV-FILT with default parameters: %d components\n', length(r_comps1));
 
-% sorter minimum-duration of components generates more components:
-params_tvfilt.min_if_length = 32;
-[r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params_tvfilt);
-err(3, 1) = sum(abs(x-r1'))./sum(abs(x));
-err(3, 2) = length(r_comps1);
 
-params_tvfilt.min_if_length = 12;
-[r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params_tvfilt, true);
-err(4, 1) = sum(abs(x-r1'))./sum(abs(x));
-err(4, 2) = length(r_comps1);
+% 2. increase smoothing by decreasing the kernel lengths:
+%    which reduces the number of components:
+params.doppler_kernel = {27, 'hamm'};
+params.lag_kernel = {11, 'dolph', 100};
 
-print_table(err, {'error', '#componets'}, {'TVFILT', 'XTFD', 'TVFILT (32)', 'TVFILT (12)'}, [], [], [3, 0]);
+[r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params);
+fprintf('TV-FILT with decreased kernel lengths: %d components\n', length(r_comps1));
+
+
+% 3. increase smoothing by increasing the kernel lengths:
+%    (in this instance, just the lag kernel) 
+params.doppler_kernel = {27, 'hamm'};
+params.lag_kernel = {211, 'dolph', 100};
+
+[r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params);
+fprintf('TV-FILT with increased kernel length: %d components\n', length(r_comps1));
+
+
+% 4. increase the minimum length of the IFs:
+params = decomp_params(length(x), 'tvfilt');
+params.min_if_length = 32;
+
+[r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params);
+fprintf('TV-FILT with decreased minimum IF duration (32 samples): %d components\n', length(r_comps1));
+
+params.min_if_length = 16;
+
+[r1, r_comps1] = tfd_decomposition(x, 'tvfilt', n_max_components, params);
+fprintf('TV-FILT with decreased minimum IF duration (16 samples): %d components\n', length(r_comps1));
 ```
 
 
@@ -143,5 +162,5 @@ print_table(err, {'error', '#componets'}, {'TVFILT', 'XTFD', 'TVFILT (32)', 'TVF
 
 ## Reference 
 
-JM O'Toole and NJ Stevenson, /Nonstationary Signal Decomposition using Quadratic
-Time--Frequency Distributions/, Signal Processing, 2025.
+JM O'Toole and NJ Stevenson, _Nonstationary Signal Decomposition using Quadratic
+Time--Frequency Distributions_, Signal Processing, 2025.

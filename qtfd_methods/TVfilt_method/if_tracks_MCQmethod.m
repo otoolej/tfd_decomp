@@ -28,7 +28,7 @@
 % John M. O' Toole, University College Cork
 % Started: 14-04-2022
 %
-% last update: Time-stamp: <2024-09-22 21:48:41 (otoolej)>
+% last update: Time-stamp: <2025-06-15 21:56:11 (otoolej)>
 %-------------------------------------------------------------------------------
 function [if_tracks, tfd_mask] = if_tracks_MCQmethod(qtfd, N, L_filt, Fs, bw, min_if_length, ...
                                                      max_peaks, qtfd_max_thres, freq_limits)
@@ -59,7 +59,11 @@ params_mcq.max_no_peaks = max_peaks;
 % 2. extract the IF components
 %---------------------------------------------------------------------
 [if_tracks, ~, ~, ~, if_energy] = find_tracks(qtfd, Fs, N, params_mcq, freq_limits);
-% fprintf('n-decomp: %d\n', length(if_tracks));
+if(length(if_tracks) == 0)
+    tfd_mask = zeros(size(qtfd, 1), N + L_filt);
+    return; 
+end
+
 
 
 % swap time and frequency columns:
