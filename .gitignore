@@ -10,6 +10,16 @@ data/plots/
 existing_methods/
 
 
+#### Python / uv
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+build/
+dist/
+
+
 #### joe made this: http://goel.io/joe
 
 #####=== Emacs ===#####
@@ -92,4 +102,3 @@ codegen/
 
 # Octave session info
 octave-workspace
-
